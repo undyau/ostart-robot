@@ -1,0 +1,9 @@
+;This help file was created with HelpScribble 7.5.2
+;Licensed to: Andy Simpson
+
+:BASE CountDown.hlp
+:TITLE CountDown
+1 CountDown
+2 CountDown=Scribble10
+2 Requirements=Scribble20
+2 Schedule=Scribble30

@@ -1,0 +1,14 @@
+License Agreement
+You should carefully read the following terms and conditions before using this software.
+
+You are hereby licensed to: use this version of the software for any use; make as many copies of this software and documentation as you wish; give exact copies of the complete original installation to anyone; and distribute the complete original installation of the software and documentation in its unmodified form via electronic means. There is no charge for any of the above. You are specifically prohibited from charging, or requesting donations, for any such copies, however made; and from distributing the software and/or documentation with other products (commercial or otherwise) without prior written permission. You may not modify, adapt, translate, rent, lease or create derivative works based upon the Software apart from the lame_enc.dll which is protected by the Gnu Lesser Public License.
+
+Evaluation and Registration
+This is FREE software. This license allows you to use this software for any purpose you want. This program was written as a feasibility exercise - a more sophisticated version (which may or may not be free) may or may not emerge in time.
+
+This software is copyright Andy Simpson 2006.
+
+THIS SOFTWARE AND THE ACCOMPANYING FILES ARE PROVIDED "AS IS" AND WITHOUT WARRANTIES AS TO PERFORMANCE OF MERCHANTABILITY OR ANY OTHER WARRANTIES WHETHER EXPRESSED OR IMPLIED.
+
+http://www.countdown.itsdamp.com
+A yougetwhatyoupayfor production.

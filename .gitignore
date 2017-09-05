@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+Countdown/Debug/ColorStatic.sbr
+Countdown/.vs/
+Countdown/Debug/
+*.opt
+*.plg
+Countdown/Countdown.vcxproj.filters

@@ -1,0 +1,426 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 201
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Countdown"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,7,7,20,20
+    LTEXT           "CountDown by undy",IDC_STATIC,40,10,70,8,SS_NOPREFIX
+    DEFPUSHBUTTON   "OK",IDOK,178,180,50,14,WS_GROUP
+    LTEXT           "Version 0.8.5,   © Andy Simpson,  August 2014",
+                    IDC_STATIC,40,20,179,8
+    GROUPBOX        "Read This",IDC_STATIC,7,43,221,130
+    LTEXT           "Static",IDC_STATIC_GNU,13,55,205,103
+    LTEXT           "This is a beta version, it will have bugs",IDC_STATIC,
+                    40,31,132,8
+END
+
+IDD_COUNTDOWN_DIALOG DIALOGEX 0, 0, 445, 321
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "CountDown"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_FIRST_HH,42,20,14,12,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    EDITTEXT        IDC_EDIT_FIRST_MM,60,20,14,12,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    EDITTEXT        IDC_EDIT_LAST_HH,85,20,14,12,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    EDITTEXT        IDC_EDIT_LAST_MM,103,20,14,12,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    EDITTEXT        IDC_EDIT_FREQ_MM,147,20,14,12,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    EDITTEXT        IDC_EDIT_FREQ_SS,180,20,14,12,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    EDITTEXT        IDC_EDIT_FILENAME,274,20,119,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Browse...",IDC_BUTTON_BROWSE,398,18,34,15
+    CONTROL         "List1",IDC_LIST_MESSAGES,"SysListView32",LVS_REPORT | 
+                    LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | WS_BORDER | 
+                    WS_TABSTOP,21,38,407,119
+    PUSHBUTTON      "Delete",IDC_BUTTON_DELETE,21,164,34,15
+    PUSHBUTTON      "Modify",IDC_BUTTON_MODIFY,61,164,34,15
+    PUSHBUTTON      "Add After",IDC_BUTTON_ADDAFTER,102,164,34,15
+    PUSHBUTTON      "Create",IDC_BUTTON_CREATE,353,164,34,15
+    PUSHBUTTON      "Play",IDC_BUTTON_PLAYREC,394,164,34,15
+    GROUPBOX        "Message",IDC_STATIC,7,200,431,64
+    GROUPBOX        "Content",IDC_STATIC,13,208,183,45
+    CONTROL         "Message",IDC_RADIO_CONTENT_MSG,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,17,222,41,9
+    COMBOBOX        IDC_COMBO_CONTENT_MSG,59,218,127,109,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Next start + ",IDC_RADIO_CONTENT_TIME,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,17,235,51,9
+    EDITTEXT        IDC_EDIT_NEXT_PLUS_MM,69,233,14,12,ES_RIGHT | 
+                    ES_AUTOHSCROLL
+    LTEXT           "minutes",IDC_STATIC,89,235,29,9
+    GROUPBOX        "Timing",IDC_STATIC,205,208,184,45
+    CONTROL         "Offset",IDC_RADIO_FREQ_EVERY,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,211,220,35,9
+    COMBOBOX        IDC_COMBO_RELATIVE,249,218,50,42,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP,WS_EX_RTLREADING
+    EDITTEXT        IDC_EDIT_TIMING_FINISH_MM,305,218,14,12,ES_RIGHT | 
+                    ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT_TIMING_FINISH_SS,337,218,14,12,ES_RIGHT | 
+                    ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT_TIMING_FINISH_TT,357,218,14,12,ES_RIGHT | 
+                    ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "After",IDC_RADIO_FREQ_AFTER_MSG,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,211,238,31,9
+    COMBOBOX        IDC_COMBO_FREQ_MSG,251,236,127,134,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "Add",IDC_BUTTON_ADD,397,213,34,15
+    PUSHBUTTON      "Cancel",ID_CANCEL_BTN,396,234,34,15
+    GROUPBOX        "(re)Record Message",IDC_STATIC,7,268,431,36
+    GROUPBOX        "",IDC_DYN_LED,13,284,8,9
+    COMBOBOX        IDC_COMBO_RECORD_MSG,27,282,159,56,CBS_DROPDOWN | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Record",IDC_BUTTON_RECORD,192,279,64,15
+    PUSHBUTTON      "Play",IDC_BUTTON_PLAY,273,279,34,15
+    PUSHBUTTON      "Amplify",IDC_BUTTON_AMPLIFY,315,279,34,15
+    PUSHBUTTON      "Dampen",IDC_BUTTON_DAMPEN,357,279,34,15
+    GROUPBOX        "Schedule",IDC_STATIC,7,7,431,178
+    LTEXT           "From :",IDC_STATIC,20,22,20,9
+    LTEXT           "to",IDC_STATIC,75,22,8,9
+    LTEXT           "Output File:",IDC_STATIC,233,22,37,10
+    LTEXT           ":",IDC_STATIC_PUNC1,56,22,8,8,0,WS_EX_TRANSPARENT
+    LTEXT           ":",IDC_STATIC_PUNC2,99,21,8,9
+    LTEXT           "min.",IDC_STATIC,320,220,13,9
+    LTEXT           ".",IDC_STATIC_PUNC5,353,220,8,9
+    LTEXT           "every",IDC_STATIC,124,22,20,9
+    LTEXT           "min.",IDC_STATIC,163,22,12,9
+    LTEXT           "seconds",IDC_STATIC_FREQ_SECONDS,197,22,28,9
+    LTEXT           "sec.",IDC_STATIC,373,219,13,9
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,8,5,0
+ PRODUCTVERSION 0,8,5,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "Undy\0"
+            VALUE "FileDescription", "CountDown\0"
+            VALUE "FileVersion", "0, 8, 5, 0\0"
+            VALUE "InternalName", "Countdown\0"
+            VALUE "LegalCopyright", "Copyright © 2006-2014\0"
+            VALUE "LegalTrademarks", "© Andy Simpson 2006-2014\0"
+            VALUE "OriginalFilename", "Countdown.EXE\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "Countdown Application\0"
+            VALUE "ProductVersion", "0, 8, 5, 0\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 194
+    END
+
+    IDD_COUNTDOWN_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 438
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 316
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_COUNTDOWN_DIALOG DLGINIT
+BEGIN
+    IDC_COMBO_RELATIVE, 0x403, 9, 0
+0x7453, 0x7261, 0x6974, 0x676e, "\000" 
+    IDC_COMBO_RELATIVE, 0x403, 10, 0
+0x6946, 0x696e, 0x6873, 0x6e69, 0x0067, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About Countdown..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (Australia) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENA)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG_RECORDTIMES DIALOG DISCARDABLE  0, 0, 300, 212
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Record Times"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CTEXT           "Time/Number",IDC_STATIC_NUMBER,7,7,286,122,WS_BORDER
+    GROUPBOX        "",IDC_DYN_LED,13,135,8,9
+    CONTROL         "Spin1",IDC_SPIN_NUMBER,"msctls_updown32",UDS_ARROWKEYS | 
+                    UDS_HORZ,76,132,148,19
+    PUSHBUTTON      "Play",IDC_BUTTON_PLAY,233,132,50,19
+    PUSHBUTTON      "Start Recording",IDC_BUTTON_RECORD,115,159,69,19
+    CONTROL         "Record sequentially",IDC_CHECK_SEQUENTIAL,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,193,85,12
+    DEFPUSHBUTTON   "Done",IDCANCEL,243,186,50,19
+END
+
+IDD_DIALOG_MAINTAIN DIALOG DISCARDABLE  0, 0, 300, 214
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Recording Maintenance"
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Delete",ID_BTN_DELETE,243,148,50,19
+    DEFPUSHBUTTON   "Done",IDCANCEL,243,188,50,19
+    CONTROL         "List1",IDC_LIST_RECS,"SysListView32",LVS_REPORT | 
+                    WS_BORDER | WS_TABSTOP,7,7,286,123
+    CONTROL         "Messages",IDC_RADIO_MESSAGES,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,22,153,131,10
+    CONTROL         "Customised Times and Numbers",IDC_RADIO_TIMES,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,22,170,131,10
+    GROUPBOX        "Recording Type",IDC_STATIC,15,141,166,44
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_DIALOG_RECORDTIMES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 293
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 205
+    END
+
+    IDD_DIALOG_MAINTAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 293
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 207
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\Countdown.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\Countdown.ico"
+IDI_ICON_TIME           ICON    DISCARDABLE     "res\\icon1.ico"
+IDI_ICON_AFTER          ICON    DISCARDABLE     "res\\ico00001.ico"
+IDI_ICON_MSG            ICON    DISCARDABLE     "res\\ico00002.ico"
+IDI_ICON_MSG_AFTER      ICON    DISCARDABLE     "res\\ico00003.ico"
+IDI_ICON_TIME_AFTER     ICON    DISCARDABLE     "res\\ico00004.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAIN_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Create",                     ID_MENU_CREATE
+        MENUITEM SEPARATOR
+        MENUITEM "Export...",                   ID_MENU_EXPORT
+        MENUITEM "Import...",                   ID_MENU_IMPORT
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_MENU_EXIT
+    END
+    POPUP "&Message"
+    BEGIN
+        MENUITEM "&Maintenance...",             ID_MENU_MAINTENANCE
+        MENUITEM "&Record Clock...",            ID_MENU_CLOCK
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Help",                       ID_MENU_HELP_CONTENTS
+        MENUITEM SEPARATOR
+        MENUITEM "&About",                      ID_MENU_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_MENU_CREATE          "Create the recording"
+    ID_MENU_EXIT            "Leave the program"
+    ID_MENU_MAINTENANCE     "Remove unused messages"
+    ID_MENU_CLOCK           "Re-record clock voice messages"
+    ID_MENU_CONTENTS        "View Help Contents"
+    ID_MENU_HELP_INDEX      "View Help index"
+    ID_MENU_ABOUT           "About CountDown"
+    ID_MENU_EXPORT          "Export files for current recording to a folder"
+    ID_MENU_IMPORT          "Import data from a folder containing a Countdown configuration"
+END
+
+#endif    // English (Australia) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\Countdown.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

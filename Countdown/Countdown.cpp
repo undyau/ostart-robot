@@ -59,7 +59,7 @@ BOOL CCountdownApp::InitInstance()
 	// If you are not using these features and wish to reduce the size
 	//  of your final executable, you should remove from the following
 	//  the specific initialization routines you do not need.
-
+	CoInitialize(NULL);
 
 	InitRecording();
 	InitWriting();

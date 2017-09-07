@@ -26,8 +26,10 @@ public:
 
     bool ReloadFromXML(CString a_XMLFileName);
     bool SaveToXML(CString a_XMLFileName, CString a_StartTime = "14:00", CString a_StopTime = "14:05");
-    CString GetFileName() {return m_FileName;};
-    void SetFileName(CString a_FileName) {m_FileName = a_FileName;};
+    CString GetFileName() {return m_FileName;}	
+    void SetFileName(CString a_FileName) {m_FileName = a_FileName;}
+	CString GetVoice() { return m_Voice; }
+	void SetVoice(CString a_Voice) { m_Voice = a_Voice; }
 
     CString LastError();
     void Clear();
@@ -36,7 +38,7 @@ public:
 	bool DeleteRecord(CString& a_Name);
     CRecording* GetRec(int a_Index);
 	CRecording* GetRec(CString a_Name);
-    int Count() const { return m_Map.size();};
+    int Count() const { return m_Map.size();}
 
     bool MakeRecording(CString a_First, CString& a_Last, CString& a_Every, CString a_FileName);
     bool ConvertToMp3(CString a_FileName);
@@ -47,12 +49,12 @@ public:
     void SetProgressWndText(CString a_Caption, LPCTSTR a_Fmt, ...);
     void StepProgressWnd();
     bool ProgressWndCancelled();
-	CString StartTime() {return m_StartTime;};
-	CString StopTime() {return m_StopTime;};
-	void StartTime(CString a_StartTime) {m_StartTime = a_StartTime;};
-	void StopTime(CString a_StopTime) {m_StopTime = a_StopTime;};
-	CString Frequency() {return m_Frequency;};
-	void Frequency(CString a_Frequency) {m_Frequency = a_Frequency;};
+	CString StartTime() {return m_StartTime;}
+	CString StopTime() {return m_StopTime;}
+	void StartTime(CString a_StartTime) {m_StartTime = a_StartTime;}
+	void StopTime(CString a_StopTime) {m_StopTime = a_StopTime;}
+	CString Frequency() {return m_Frequency;}
+	void Frequency(CString a_Frequency) {m_Frequency = a_Frequency;}
     CRecording** GetSortedRecords();
 	bool HasDependent(CString& a_Name);
 	bool ModifyRecord(CString& a_Name,
@@ -82,6 +84,7 @@ private:
 	CString m_StartTime;
 	CString m_StopTime;
 	CString m_Frequency;
+	CString m_Voice;
 
 };
 

@@ -63,9 +63,9 @@ bool CRecordCollection::ReloadFromXML(CString a_XMLFileName)
     Clear();
     #define VARBITS(a) #a, a 
 	GetXMLValue(theXML, VARBITS(m_Version), 1);
-	if (m_Version < 2)
+	if (m_Version < 3)
 		{
-		m_Version = 2; // default to current value in case of save
+		m_Version = 3; // default to current value in case of save
         m_LastError = a_XMLFileName + " contains data from previous incompatible version of CountDown.";
         return false;
 		}
@@ -74,6 +74,7 @@ bool CRecordCollection::ReloadFromXML(CString a_XMLFileName)
 	GetXMLValue(theXML, VARBITS(m_StartTime));    
 	GetXMLValue(theXML, VARBITS(m_StopTime));    
 	GetXMLValue(theXML, VARBITS(m_Frequency), "1:00"); 
+	GetXMLValue(theXML, VARBITS(m_Voice));
     #undef VARBITS
 
     GetXMLValue(theXML, "Records", theXML);
@@ -189,6 +190,7 @@ bool CRecordCollection::SaveToXML(CString a_XMLFileName, CString a_StartTime, CS
     theXML = ToXML(VARBITS(m_TimeRecordsCreated)) + theXML;
     theXML = ToXML(VARBITS(m_FileName)) + theXML;
 	theXML = ToXML(VARBITS(m_Frequency)) + theXML;
+	theXML = ToXML(VARBITS(m_Voice)) + theXML;
 	theXML = ToXML("CountDownConfig", theXML);
     
 

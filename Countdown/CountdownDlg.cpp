@@ -2,6 +2,10 @@
 //
 
 #include "stdafx.h"
+#include <sapi.h>
+#pragma warning(disable:4996)
+#include <sphelper.h>
+#pragma warning(default:4996)
 #include "Countdown.h"
 #include "CountdownDlg.h"
 #include "Recording.h"
@@ -100,7 +104,7 @@ END_MESSAGE_MAP()
 CCountdownDlg::CCountdownDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CCountdownDlg::IDD, pParent), m_InAdd(false), m_InCreate(false), m_InExit(false),
     m_InterimChange(false), m_ModifyMode(false)
-	{
+{
 	//{{AFX_DATA_INIT(CCountdownDlg)
 	m_ContentMsg = _T("");
 	m_FreqMsg = _T("00");
@@ -119,6 +123,7 @@ CCountdownDlg::CCountdownDlg(CWnd* pParent /*=NULL*/)
 	m_TimingTT = _T("0");
 	m_NextPlusMM = _T("");
 	m_FreqSS = _T("");
+	m_Voice = _T("");
 	//}}AFX_DATA_INIT
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -194,68 +199,69 @@ void CCountdownDlg::DoDataExchange(CDataExchange* pDX)
 	DDV_MaxChars(pDX, m_FreqSS, 2);
 	//}}AFX_DATA_MAP
 
-    if (m_InAdd)
-        {
-        DDV_MinMaxInt(pDX, atoi(m_TimingMM), 0, 59);
-        DDV_MinMaxInt(pDX, atoi(m_TimingSS), 0, 59);
+	if (m_InAdd)
+	{
+		DDV_MinMaxInt(pDX, atoi(m_TimingMM), 0, 59);
+		DDV_MinMaxInt(pDX, atoi(m_TimingSS), 0, 59);
 
-        while (m_TimingMM.GetLength() < 2) m_TimingMM = " " + m_TimingMM;
-        while (m_TimingSS.GetLength() < 2) m_TimingSS = " " + m_TimingSS;
+		while (m_TimingMM.GetLength() < 2) m_TimingMM = " " + m_TimingMM;
+		while (m_TimingSS.GetLength() < 2) m_TimingSS = " " + m_TimingSS;
 
 
-        if (pDX->m_bSaveAndValidate)
-            {
-            if (m_ContentMsg.IsEmpty() && IsChecked(IDC_RADIO_CONTENT_MSG))
-                {
-                pDX->PrepareEditCtrl(IDC_COMBO_CONTENT_MSG);
-                CString message;
-                message.Format("A message must be selected");
-                AfxMessageBox(message, MB_ICONINFORMATION, 0);
-                pDX->Fail();
-                }
-            }
-        }
-    else if (!m_InExit)
-        {
-        DDV_MinMaxInt(pDX, atoi(m_FirstHH), 0, 23);
-        DDV_MinMaxInt(pDX, atoi(m_FirstMM), 0, 59);
+		if (pDX->m_bSaveAndValidate)
+		{
+			if (m_ContentMsg.IsEmpty() && IsChecked(IDC_RADIO_CONTENT_MSG))
+			{
+				pDX->PrepareEditCtrl(IDC_COMBO_CONTENT_MSG);
+				CString message;
+				message.Format("A message must be selected");
+				AfxMessageBox(message, MB_ICONINFORMATION, 0);
+				pDX->Fail();
+			}
+		}
+	}
+	else if (!m_InExit)
+	{
+		DDV_MinMaxInt(pDX, atoi(m_FirstHH), 0, 23);
+		DDV_MinMaxInt(pDX, atoi(m_FirstMM), 0, 59);
 
-        DDV_MinMaxInt(pDX, atoi(m_LastHH), 0, 23);
-        DDV_MinMaxInt(pDX, atoi(m_LastMM), 0, 59);
+		DDV_MinMaxInt(pDX, atoi(m_LastHH), 0, 23);
+		DDV_MinMaxInt(pDX, atoi(m_LastMM), 0, 59);
 
 		DDV_MinMaxInt(pDX, atoi(m_FreqMM), 0, 179);
 		DDV_MinMaxInt(pDX, atoi(m_FreqSS), 0, 59);
 
 		while (m_FreqMM.GetLength() < 1) m_FreqMM = "0" + m_FreqMM;
 		while (m_FreqSS.GetLength() < 2) m_FreqSS = "0" + m_FreqSS;
-        if (pDX->m_bSaveAndValidate)
-            {
+		if (pDX->m_bSaveAndValidate)
+		{
 			theApp.m_Recs.Frequency(m_FreqMM + ':' + m_FreqSS);
+		}
+
+		if (m_InCreate)
+		{
+			long start, finish;
+			start = atoi(m_FirstHH) * 100 +
+				atoi(m_FirstMM);
+
+			finish = atoi(m_LastHH) * 100 +
+				atoi(m_LastMM);
+
+			if (start > finish)
+			{
+				pDX->PrepareEditCtrl(IDC_EDIT_FIRST_HH);
+				CString message;
+				message.Format("Start must be before end.");
+				AfxMessageBox(message, MB_ICONINFORMATION, 0);
+				pDX->Fail();
 			}
-
-        if (m_InCreate)
-            {
-            long start, finish;
-            start = atoi(m_FirstHH) * 100 +
-                    atoi(m_FirstMM);
-
-            finish = atoi(m_LastHH) * 100 +
-                     atoi(m_LastMM);
-
-            if (start > finish)
-                {
-                pDX->PrepareEditCtrl(IDC_EDIT_FIRST_HH);
-                CString message;
-                message.Format("Start must be before end.");
-                AfxMessageBox(message, MB_ICONINFORMATION, 0);
-                pDX->Fail();
-                }
-            }
+		}
 		if (!m_InterimChange)
 			DDV_PCFileName(pDX, IDC_EDIT_FILENAME, m_FileName);
-        }
-
 	}
+
+	DDX_Control(pDX, IDC_COMBO_VOICE, m_VoiceCtrl);
+}
 
 BEGIN_MESSAGE_MAP(CCountdownDlg, CDialog)
 	//{{AFX_MSG_MAP(CCountdownDlg)
@@ -383,6 +389,10 @@ BOOL CCountdownDlg::OnInitDialog()
   //  ShrinkWindow(IDC_STATIC_PUNC4);
     ShrinkWindow(IDC_STATIC_PUNC5);
 
+	EnumerateVoices();
+	for (unsigned int i = 0; i < m_Voices.size(); i++)
+		m_VoiceCtrl.InsertString(-1, m_Voices.at(i));
+
     // Reload any stored stuff, in time order
 	InitialiseData();
 
@@ -392,6 +402,7 @@ BOOL CCountdownDlg::OnInitDialog()
 void CCountdownDlg::InitialiseData()
 	{
 	m_FileName = theApp.m_Recs.GetFileName();
+	m_Voice = theApp.m_Recs.GetVoice();
 	m_LastHH = Word(theApp.m_Recs.StopTime(), 0, ':');
 	m_LastMM = Word(theApp.m_Recs.StopTime(), 1, ':');
 	m_FirstHH = Word(theApp.m_Recs.StartTime(), 0, ':');
@@ -1492,6 +1503,100 @@ bool CCountdownDlg::CopyAllUsedSounds(CFileOperation& fo, CString folder)
 	
 	return true;
 	}
+
+void CCountdownDlg::EnumerateVoices()
+{
+	HRESULT hr = S_OK;
+
+	CComPtr<ISpObjectTokenCategory> cpSpCategory = NULL;
+	CComPtr<ISpObjectToken>        cpToken;
+	CComPtr<IEnumSpObjectTokens>   cpEnum;
+	CComPtr<ISpVoice>              cpVoice;
+	ULONG                          ulCount = 0;
+
+	m_Voices.empty();
+
+	if (SUCCEEDED(hr))
+		hr = SpEnumTokens(SPCAT_VOICES, NULL, NULL, &cpEnum);
+
+	if (SUCCEEDED(hr))
+		hr = cpEnum->GetCount(&ulCount);
+
+	// Obtain a list of available voice tokens, set the voice to the token, and call Speak
+	while (SUCCEEDED(hr) && ulCount--)
+	{
+		cpToken.Release();
+		if (SUCCEEDED(hr))
+			hr = cpEnum->Next(1, &cpToken, NULL);
+
+		if (SUCCEEDED(hr)) {
+			WCHAR	*desc;
+			SpGetDescription(cpToken, &desc, SpGetUserDefaultUILanguage());
+#ifdef	UNICODE
+			m_Voices.push_back(CString(desc));
+#else
+			m_Voices.push_back(CString(desc));
+#endif
+		}
+	}
+	cpEnum.Release();
+	cpToken.Release();
+/*
+	// Create the SAPI voice.
+	hr = cpVoice.CoCreateInstance(CLSID_SpVoice);
+
+	if (SUCCEEDED(hr))
+	{
+		hr = CoCreateInstance(CLSID_SpObjectTokenCategory, NULL, CLSCTX_ALL, __uuidof(ISpObjectTokenCategory), (void**)&cpSpCategory);
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		hr = cpSpCategory->SetId(SPCAT_VOICES, FALSE);
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		// Enumerate the available voices.
+		hr = cpSpCategory->EnumTokens(SPCAT_VOICES, NULL, &cpEnum);
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		// Get the number of voices.
+		hr = cpEnum->GetCount(&ulCount);
+	}
+
+	// Obtain a list of available voice tokens, set
+	// the voice to the token, and call Speak.
+	while (SUCCEEDED(hr) && ulCount--)
+	{
+		cpVoiceToken.Release();
+
+		if (SUCCEEDED(hr))
+		{
+			hr = cpEnum->Next(1, &cpVoiceToken , NULL);
+		}
+
+		if (SUCCEEDED(hr))
+		{
+			CSpDynamicString dstrDesc;
+			SpGetDescription(cpVoiceToken, &dstrDesc);
+			m_Voices.push_back(CString(dstrDesc));
+		}
+
+		if (SUCCEEDED(hr))
+		{
+			hr = cpVoice->Speak(L"How are you?", SPF_DEFAULT, NULL);
+		}
+
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		// Do more stuff here.
+	}*/
+}
 
 
 void CCountdownDlg::OnMenuExport() 

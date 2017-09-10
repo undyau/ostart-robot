@@ -2,10 +2,6 @@
 //
 
 #include "stdafx.h"
-#include <sapi.h>
-#pragma warning(disable:4996)
-#include <sphelper.h>
-#pragma warning(default:4996)
 #include "Countdown.h"
 #include "CountdownDlg.h"
 #include "Recording.h"
@@ -20,6 +16,7 @@
 #pragma warning(disable:4091)
 #include "imagehlp.h"
 #pragma warning(default:4091)
+#include "RecordingPropsDlg.h"
 
 
 extern CCountdownApp theApp;
@@ -123,7 +120,6 @@ CCountdownDlg::CCountdownDlg(CWnd* pParent /*=NULL*/)
 	m_TimingTT = _T("0");
 	m_NextPlusMM = _T("");
 	m_FreqSS = _T("");
-	m_Voice = _T("");
 	//}}AFX_DATA_INIT
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -259,8 +255,6 @@ void CCountdownDlg::DoDataExchange(CDataExchange* pDX)
 		if (!m_InterimChange)
 			DDV_PCFileName(pDX, IDC_EDIT_FILENAME, m_FileName);
 	}
-
-	DDX_Control(pDX, IDC_COMBO_VOICE, m_VoiceCtrl);
 }
 
 BEGIN_MESSAGE_MAP(CCountdownDlg, CDialog)
@@ -309,6 +303,7 @@ BEGIN_MESSAGE_MAP(CCountdownDlg, CDialog)
 	ON_BN_CLICKED(ID_CANCEL_BTN, OnCancelBtn)
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_WRITESOUNDFILE_CLOSEDFILE, OnClosedSoundFile)
+	ON_COMMAND(ID_MENU_RECORDING, &CCountdownDlg::OnMenuRecordingProperties)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -389,10 +384,6 @@ BOOL CCountdownDlg::OnInitDialog()
   //  ShrinkWindow(IDC_STATIC_PUNC4);
     ShrinkWindow(IDC_STATIC_PUNC5);
 
-	EnumerateVoices();
-	for (unsigned int i = 0; i < m_Voices.size(); i++)
-		m_VoiceCtrl.InsertString(-1, m_Voices.at(i));
-
     // Reload any stored stuff, in time order
 	InitialiseData();
 
@@ -402,7 +393,6 @@ BOOL CCountdownDlg::OnInitDialog()
 void CCountdownDlg::InitialiseData()
 	{
 	m_FileName = theApp.m_Recs.GetFileName();
-	m_Voice = theApp.m_Recs.GetVoice();
 	m_LastHH = Word(theApp.m_Recs.StopTime(), 0, ':');
 	m_LastMM = Word(theApp.m_Recs.StopTime(), 1, ':');
 	m_FirstHH = Word(theApp.m_Recs.StartTime(), 0, ':');
@@ -1504,100 +1494,6 @@ bool CCountdownDlg::CopyAllUsedSounds(CFileOperation& fo, CString folder)
 	return true;
 	}
 
-void CCountdownDlg::EnumerateVoices()
-{
-	HRESULT hr = S_OK;
-
-	CComPtr<ISpObjectTokenCategory> cpSpCategory = NULL;
-	CComPtr<ISpObjectToken>        cpToken;
-	CComPtr<IEnumSpObjectTokens>   cpEnum;
-	CComPtr<ISpVoice>              cpVoice;
-	ULONG                          ulCount = 0;
-
-	m_Voices.empty();
-
-	if (SUCCEEDED(hr))
-		hr = SpEnumTokens(SPCAT_VOICES, NULL, NULL, &cpEnum);
-
-	if (SUCCEEDED(hr))
-		hr = cpEnum->GetCount(&ulCount);
-
-	// Obtain a list of available voice tokens, set the voice to the token, and call Speak
-	while (SUCCEEDED(hr) && ulCount--)
-	{
-		cpToken.Release();
-		if (SUCCEEDED(hr))
-			hr = cpEnum->Next(1, &cpToken, NULL);
-
-		if (SUCCEEDED(hr)) {
-			WCHAR	*desc;
-			SpGetDescription(cpToken, &desc, SpGetUserDefaultUILanguage());
-#ifdef	UNICODE
-			m_Voices.push_back(CString(desc));
-#else
-			m_Voices.push_back(CString(desc));
-#endif
-		}
-	}
-	cpEnum.Release();
-	cpToken.Release();
-/*
-	// Create the SAPI voice.
-	hr = cpVoice.CoCreateInstance(CLSID_SpVoice);
-
-	if (SUCCEEDED(hr))
-	{
-		hr = CoCreateInstance(CLSID_SpObjectTokenCategory, NULL, CLSCTX_ALL, __uuidof(ISpObjectTokenCategory), (void**)&cpSpCategory);
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		hr = cpSpCategory->SetId(SPCAT_VOICES, FALSE);
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		// Enumerate the available voices.
-		hr = cpSpCategory->EnumTokens(SPCAT_VOICES, NULL, &cpEnum);
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		// Get the number of voices.
-		hr = cpEnum->GetCount(&ulCount);
-	}
-
-	// Obtain a list of available voice tokens, set
-	// the voice to the token, and call Speak.
-	while (SUCCEEDED(hr) && ulCount--)
-	{
-		cpVoiceToken.Release();
-
-		if (SUCCEEDED(hr))
-		{
-			hr = cpEnum->Next(1, &cpVoiceToken , NULL);
-		}
-
-		if (SUCCEEDED(hr))
-		{
-			CSpDynamicString dstrDesc;
-			SpGetDescription(cpVoiceToken, &dstrDesc);
-			m_Voices.push_back(CString(dstrDesc));
-		}
-
-		if (SUCCEEDED(hr))
-		{
-			hr = cpVoice->Speak(L"How are you?", SPF_DEFAULT, NULL);
-		}
-
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		// Do more stuff here.
-	}*/
-}
-
 
 void CCountdownDlg::OnMenuExport() 
 	{
@@ -1683,3 +1579,10 @@ LRESULT CCountdownDlg::OnClosedSoundFile(WPARAM wParam, LPARAM lParam)
 		}
 	return 0;
 	}
+
+
+void CCountdownDlg::OnMenuRecordingProperties()
+{
+	CRecordingPropsDlg dlg(this);
+	dlg.DoModal();
+}

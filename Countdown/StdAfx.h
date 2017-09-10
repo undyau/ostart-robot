@@ -32,4 +32,5 @@
 //but do not change the name of _Module
 extern CComModule _Module;
 #include <atlcom.h>
+#include <afxcontrolbars.h>
 #endif // !defined(AFX_STDAFX_H__15EE6AE2_CEB6_47D8_A5B7_930BA28319F4__INCLUDED_)

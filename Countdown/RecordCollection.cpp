@@ -74,7 +74,6 @@ bool CRecordCollection::ReloadFromXML(CString a_XMLFileName)
 	GetXMLValue(theXML, VARBITS(m_StartTime));    
 	GetXMLValue(theXML, VARBITS(m_StopTime));    
 	GetXMLValue(theXML, VARBITS(m_Frequency), "1:00"); 
-	GetXMLValue(theXML, VARBITS(m_Voice));
     #undef VARBITS
 
     GetXMLValue(theXML, "Records", theXML);

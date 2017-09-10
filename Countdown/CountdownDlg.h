@@ -59,7 +59,6 @@ public:
 	CEdit	m_FreqSSCtrl;
 	CEdit	m_FreqMMCtrl;
 	CComboBox	m_FreqMsgCtrl;
-	CComboBox m_VoiceCtrl;
 	CString	m_ContentFormat;
 	CString	m_ContentMsg;
 	CString	m_FreqMsg;
@@ -78,7 +77,6 @@ public:
 	CString	m_TimingTT;
 	CString	m_NextPlusMM;
 	CString	m_FreqSS;	
-	CString m_Voice;  // The TTS voice to use
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides
@@ -168,11 +166,11 @@ private:
 	void ModifyRec();
 	void InitialiseData();
 	bool CopyAllUsedSounds(CFileOperation& fo, CString folder);
-	void EnumerateVoices();
-	std::vector<CString> m_Voices;
     CMenu m_Menu;
  
 
+public:
+	afx_msg void OnMenuRecordingProperties();
 };
 
 //{{AFX_INSERT_LOCATION}}

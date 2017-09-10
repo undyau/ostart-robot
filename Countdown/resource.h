@@ -15,6 +15,8 @@
 #define IDD_DIALOG_RECORDTIMES          136
 #define IDD_DIALOG_MAINTAIN             137
 #define IDR_MAIN_MENU                   138
+#define IDD_DIALOG_PROPERTIES           142
+#define IDD_DIALOG_RECORDING_PROPERTIES 142
 #define IDC_BUTTON_RECORD               1000
 #define IDC_COMBO_RECORD_MSG            1001
 #define IDC_LIST_MESSAGES               1002
@@ -94,7 +96,6 @@
 #define IDC_RADIO_TIMES                 1071
 #define IDC_STATIC_GNU                  1073
 #define IDC_STATIC_FREQ_SECONDS         1074
-#define IDC_COMBO1                      1075
 #define IDC_COMBO_VOICE                 1075
 #define ID_MENU_CREATE                  32771
 #define ID_MENU_EXIT                    32772
@@ -107,13 +108,15 @@
 #define ID_MENU_OFFSET                  32779
 #define ID_MENU_EXPORT                  32780
 #define ID_MENU_IMPORT                  32781
+#define ID_OPTIONS_RECORDING            32782
+#define ID_MENU_RECORDING               32783
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        142
-#define _APS_NEXT_COMMAND_VALUE         32782
+#define _APS_NEXT_RESOURCE_VALUE        144
+#define _APS_NEXT_COMMAND_VALUE         32784
 #define _APS_NEXT_CONTROL_VALUE         1076
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

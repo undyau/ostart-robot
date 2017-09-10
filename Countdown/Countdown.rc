@@ -94,9 +94,6 @@ BEGIN
     LTEXT           "min.",IDC_STATIC,163,22,12,9
     LTEXT           "seconds",IDC_STATIC_FREQ_SECONDS,197,22,28,9
     LTEXT           "sec.",IDC_STATIC,373,219,13,9
-    GROUPBOX        "Text To Speech",IDC_STATIC,7,319,435,36
-    COMBOBOX        IDC_COMBO_VOICE,51,334,212,127,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Voice:",IDC_STATIC,19,336,30,9
 END
 
 
@@ -251,6 +248,18 @@ BEGIN
     GROUPBOX        "Recording Type",IDC_STATIC,15,141,166,44
 END
 
+IDD_DIALOG_RECORDING_PROPERTIES DIALOGEX 0, 0, 309, 176
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Recording Properties"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,198,155,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,252,155,50,14
+    GROUPBOX        "Text To Speech",IDC_STATIC,7,7,295,36
+    COMBOBOX        IDC_COMBO_VOICE,46,19,212,127,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Voice:",IDC_STATIC,14,21,30,9
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -274,6 +283,14 @@ BEGIN
         RIGHTMARGIN, 293
         TOPMARGIN, 7
         BOTTOMMARGIN, 207
+    END
+
+    IDD_DIALOG_RECORDING_PROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -358,12 +375,27 @@ BEGIN
         MENUITEM "&Maintenance...",             ID_MENU_MAINTENANCE
         MENUITEM "&Record Clock...",            ID_MENU_CLOCK
     END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "&Recording...",               ID_MENU_RECORDING
+    END
     POPUP "&Help"
     BEGIN
         MENUITEM "&Help",                       ID_MENU_HELP_CONTENTS
         MENUITEM SEPARATOR
         MENUITEM "&About",                      ID_MENU_ABOUT
     END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_DIALOG_RECORDING_PROPERTIES AFX_DIALOG_LAYOUT
+BEGIN
+    0
 END
 
 
@@ -383,6 +415,7 @@ BEGIN
     ID_MENU_ABOUT           "About CountDown"
     ID_MENU_EXPORT          "Export files for current recording to a folder"
     ID_MENU_IMPORT          "Import data from a folder containing a Countdown configuration"
+    ID_MENU_RECORDING       "Recording options"
 END
 
 #endif    // English (Australia) resources

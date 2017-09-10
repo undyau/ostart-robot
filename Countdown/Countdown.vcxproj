@@ -149,6 +149,7 @@
     <ClCompile Include="ListCtrlEx.cpp" />
     <ClCompile Include="MaintenanceDlg.cpp" />
     <ClCompile Include="ProgressWnd.cpp" />
+    <ClCompile Include="RecordingPropsDlg.cpp" />
     <ClCompile Include="RecordCollection.cpp" />
     <ClCompile Include="Recording.cpp" />
     <ClCompile Include="RecordSound.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="ListCtrlEx.h" />
     <ClInclude Include="MaintenanceDlg.h" />
     <ClInclude Include="ProgressWnd.h" />
+    <ClInclude Include="RecordingPropsDlg.h" />
     <ClInclude Include="RecordCollection.h" />
     <ClInclude Include="Recording.h" />
     <ClInclude Include="RecordSound.h" />

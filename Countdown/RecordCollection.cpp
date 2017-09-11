@@ -74,6 +74,8 @@ bool CRecordCollection::ReloadFromXML(CString a_XMLFileName)
 	GetXMLValue(theXML, VARBITS(m_StartTime));    
 	GetXMLValue(theXML, VARBITS(m_StopTime));    
 	GetXMLValue(theXML, VARBITS(m_Frequency), "1:00"); 
+	GetXMLValue(theXML, VARBITS(m_Voice));
+	GetXMLValue(theXML, VARBITS(m_StartListFile));
     #undef VARBITS
 
     GetXMLValue(theXML, "Records", theXML);
@@ -190,6 +192,7 @@ bool CRecordCollection::SaveToXML(CString a_XMLFileName, CString a_StartTime, CS
     theXML = ToXML(VARBITS(m_FileName)) + theXML;
 	theXML = ToXML(VARBITS(m_Frequency)) + theXML;
 	theXML = ToXML(VARBITS(m_Voice)) + theXML;
+	theXML = ToXML(VARBITS(m_StartListFile)) + theXML;
 	theXML = ToXML("CountDownConfig", theXML);
     
 

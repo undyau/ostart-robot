@@ -28,6 +28,10 @@ public:
     bool SaveToXML(CString a_XMLFileName, CString a_StartTime = "14:00", CString a_StopTime = "14:05");
     CString GetFileName() {return m_FileName;}	
     void SetFileName(CString a_FileName) {m_FileName = a_FileName;}
+	CString GetVoice() { return m_Voice; }
+	void SetVoice(CString a_Voice) { m_Voice = a_Voice; }
+	CString GetStartListFile() { return m_StartListFile; }
+	void SetStartListFile(CString a_StartListFile) {m_StartListFile = a_StartListFile;	}
 
     CString LastError();
     void Clear();
@@ -83,6 +87,7 @@ private:
 	CString m_StopTime;
 	CString m_Frequency;
 	CString m_Voice;
+	CString m_StartListFile;
 
 };
 

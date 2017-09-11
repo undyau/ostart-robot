@@ -15,9 +15,9 @@
 
 IMPLEMENT_DYNAMIC(CRecordingPropsDlg, CDialogEx)
 
-CRecordingPropsDlg::CRecordingPropsDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_DIALOG_PROPERTIES, pParent)
-	, m_Voice(0)
+CRecordingPropsDlg::CRecordingPropsDlg(CWnd* pParent /*=NULL*/, CString a_VoiceName)
+	: CDialogEx(IDD_DIALOG_RECORDING_PROPERTIES, pParent)
+	, m_VoiceName(a_VoiceName)
 {
 
 }
@@ -30,6 +30,7 @@ void CRecordingPropsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO_VOICE, m_VoiceCtrl);
+	DDX_Text(pDX, IDC_COMBO_VOICE, m_VoiceName);
 }
 
 void CRecordingPropsDlg::EnumerateVoices()
@@ -140,8 +141,13 @@ BOOL CRecordingPropsDlg::OnInitDialog()
 
 
 	EnumerateVoices();
+	unsigned int select;
 	for (unsigned int i = 0; i < m_Voices.size(); i++)
+		{
 		m_VoiceCtrl.InsertString(-1, m_Voices.at(i));
+		if (m_Voices.at(i) == m_VoiceName)
+			select = i;
+		}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE

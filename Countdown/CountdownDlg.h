@@ -171,6 +171,10 @@ private:
 
 public:
 	afx_msg void OnMenuRecordingProperties();
+	CEdit m_StartListCtrl;
+	CString m_StartListFile;
+	afx_msg void OnBnClickedButtonBrowseStartlist();
+	afx_msg void OnEnChangeEditStartlistfile();
 };
 
 //{{AFX_INSERT_LOCATION}}

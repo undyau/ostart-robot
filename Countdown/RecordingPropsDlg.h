@@ -10,12 +10,13 @@ class CRecordingPropsDlg : public CDialogEx
 	DECLARE_DYNAMIC(CRecordingPropsDlg)
 
 public:
-	CRecordingPropsDlg(CWnd* pParent = NULL);   // standard constructor
+	CRecordingPropsDlg(CWnd* pParent = NULL, CString m_VoiceName = CString(""));   // standard constructor
 	virtual ~CRecordingPropsDlg();
+	CString GetVoice() { return m_VoiceName; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_DIALOG_PROPERTIES };
+	enum { IDD = IDD_DIALOG_RECORDING_PROPERTIES };
 #endif
 
 protected:
@@ -28,7 +29,9 @@ public:
 private:
 	void EnumerateVoices();
 	std::vector<CString> m_Voices;
+	CString m_VoiceName;
 public:
-	char m_Voice;
+//	char m_Voice;
+
 	virtual BOOL OnInitDialog();
 };

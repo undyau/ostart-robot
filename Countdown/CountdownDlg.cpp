@@ -101,6 +101,7 @@ END_MESSAGE_MAP()
 CCountdownDlg::CCountdownDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CCountdownDlg::IDD, pParent), m_InAdd(false), m_InCreate(false), m_InExit(false),
     m_InterimChange(false), m_ModifyMode(false)
+	, m_StartListFile(_T(""))
 {
 	//{{AFX_DATA_INIT(CCountdownDlg)
 	m_ContentMsg = _T("");
@@ -157,6 +158,7 @@ void CCountdownDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_CREATE, m_CreateCtrl);
 	DDX_Control(pDX, IDC_BUTTON_BROWSE, m_BrowseCtrl);
 	DDX_Control(pDX, IDC_EDIT_FILENAME, m_FileNameCtrl);
+	DDX_Control(pDX, IDC_EDIT_STARTLISTFILE, m_StartListCtrl);
 	DDX_Control(pDX, IDC_DYN_LED, m_LedCtrl);
 	DDX_Control(pDX, IDC_RADIO_FREQ_EVERY, m_FreqRadioCtrl);
 	DDX_Control(pDX, IDC_RADIO_CONTENT_MSG, m_ContentRadioCtrl);
@@ -183,6 +185,7 @@ void CCountdownDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Radio(pDX, IDC_RADIO_CONTENT_MSG, m_ContentRadio);
 	DDX_Radio(pDX, IDC_RADIO_FREQ_EVERY, m_FreqRadio);
 	DDX_Text(pDX, IDC_EDIT_FILENAME, m_FileName);
+	DDX_Text(pDX, IDC_EDIT_STARTLISTFILE, m_StartListFile);
 	DDX_Text(pDX, IDC_EDIT_TIMING_FINISH_MM, m_TimingMM);
 	DDV_MaxChars(pDX, m_TimingMM, 2);
 	DDX_Text(pDX, IDC_EDIT_TIMING_FINISH_SS, m_TimingSS);
@@ -253,8 +256,12 @@ void CCountdownDlg::DoDataExchange(CDataExchange* pDX)
 			}
 		}
 		if (!m_InterimChange)
+		{
 			DDV_PCFileName(pDX, IDC_EDIT_FILENAME, m_FileName);
+			DDV_PCFileName(pDX, IDC_EDIT_STARTLISTFILE, m_StartListFile);
+		}
 	}
+
 }
 
 BEGIN_MESSAGE_MAP(CCountdownDlg, CDialog)
@@ -304,6 +311,8 @@ BEGIN_MESSAGE_MAP(CCountdownDlg, CDialog)
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_WRITESOUNDFILE_CLOSEDFILE, OnClosedSoundFile)
 	ON_COMMAND(ID_MENU_RECORDING, &CCountdownDlg::OnMenuRecordingProperties)
+	ON_BN_CLICKED(IDC_BUTTON_BROWSE_STARTLIST, &CCountdownDlg::OnBnClickedButtonBrowseStartlist)
+	ON_EN_CHANGE(IDC_EDIT_STARTLISTFILE, &CCountdownDlg::OnEnChangeEditStartlistfile)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -393,6 +402,7 @@ BOOL CCountdownDlg::OnInitDialog()
 void CCountdownDlg::InitialiseData()
 	{
 	m_FileName = theApp.m_Recs.GetFileName();
+	m_StartListFile = theApp.m_Recs.GetStartListFile();
 	m_LastHH = Word(theApp.m_Recs.StopTime(), 0, ':');
 	m_LastMM = Word(theApp.m_Recs.StopTime(), 1, ':');
 	m_FirstHH = Word(theApp.m_Recs.StartTime(), 0, ':');
@@ -596,6 +606,12 @@ void CCountdownDlg::PopulateCombos()
 	m_ContentMsgCtrl.AddString("<Next Minute + 1>");
 	m_ContentMsgCtrl.AddString("<Next Minute + 2>");
 	m_ContentMsgCtrl.AddString("<Next Minute + 3>");
+	m_ContentMsgCtrl.AddString("<Next Minute + 4>");
+	m_ContentMsgCtrl.AddString("<Starters + 1>");
+	m_ContentMsgCtrl.AddString("<Starters + 2>");
+	m_ContentMsgCtrl.AddString("<Starters + 3>");
+	m_ContentMsgCtrl.AddString("<Starters + 4>");
+	m_ContentMsgCtrl.AddString("<Starters + 5>");
 
 
     result = !!finder.FindFile(theApp.CustomSoundDir() + "\\*.wav");
@@ -808,7 +824,7 @@ void CCountdownDlg::OnButtonAdd()
             newRec = theApp.m_Recs.AddCustomRecord(m_ContentMsg,
                                                 m_FreqMsg);
 	else
-		{                               // Its a time like <Next Minute>
+		{                               // Its a time like <Next Minute> or a start list like <Starters + 4>
 		CString nextPlus("00");
 		if (IsChecked(IDC_RADIO_CONTENT_MSG))
 			{
@@ -1263,7 +1279,8 @@ void CCountdownDlg::OnClose()
     CString name;
     m_FileNameCtrl.GetWindowText(name);
     theApp.m_Recs.SetFileName(name);
-
+	m_StartListCtrl.GetWindowText(m_StartListFile);
+    theApp.m_Recs.SetStartListFile(m_StartListFile);
 	
 	CDialog::OnClose();
     }
@@ -1583,6 +1600,32 @@ LRESULT CCountdownDlg::OnClosedSoundFile(WPARAM wParam, LPARAM lParam)
 
 void CCountdownDlg::OnMenuRecordingProperties()
 {
-	CRecordingPropsDlg dlg(this);
-	dlg.DoModal();
+	CRecordingPropsDlg dlg(this, theApp.m_Recs.GetVoice());
+	if (dlg.DoModal() == IDOK)
+		theApp.m_Recs.SetVoice(dlg.GetVoice());
+}
+
+
+void CCountdownDlg::OnBnClickedButtonBrowseStartlist()
+{
+	m_StartListCtrl.GetWindowText(m_StartListFile);
+	CFileDialog l_SampleDlg(TRUE, ".xml", m_StartListFile, 0, "XML Files (*.xml)||");
+	int iRet = l_SampleDlg.DoModal();
+	CString l_strFileName;
+	l_strFileName = l_SampleDlg.GetPathName();
+
+	if (iRet == IDOK)
+	{
+		m_StartListCtrl.SetWindowText(l_strFileName);
+		m_StartListCtrl.GetWindowText(m_StartListFile);
+		theApp.m_Recs.SetStartListFile(m_StartListFile);
+	}
+}
+
+
+void CCountdownDlg::OnEnChangeEditStartlistfile()
+{
+	//m_StartListCtrl.GetWindowText(m_StartListFile);
+	//if (FileExists(m_StartListFile))
+	//	theApp.m_Recs.SetStartListFile(m_StartListFile);
 }

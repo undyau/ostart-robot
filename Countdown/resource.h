@@ -15,7 +15,6 @@
 #define IDD_DIALOG_RECORDTIMES          136
 #define IDD_DIALOG_MAINTAIN             137
 #define IDR_MAIN_MENU                   138
-#define IDD_DIALOG_PROPERTIES           142
 #define IDD_DIALOG_RECORDING_PROPERTIES 142
 #define IDC_BUTTON_RECORD               1000
 #define IDC_COMBO_RECORD_MSG            1001
@@ -26,6 +25,7 @@
 #define IDC_RADIO_CONTENT_TIME          1006
 #define ID_CANCEL_BTN                   1007
 #define IDC_COMBO_FREQ_MSG              1008
+#define IDC_RADIO_CONTENT_STARTERS      1009
 #define IDC_COMBO_CONTENT_FORMAT        1011
 #define IDC_RADIO_TIMING_FINISH         1013
 #define IDC_RADIO_TIMING_START          1014
@@ -66,6 +66,7 @@
 #define IDC_EDIT_LAST_SS                1043
 #define IDC_EDIT_NEXT_PLUS_MM           1043
 #define IDC_EDIT_TIMING_MSG_TT          1044
+#define IDC_EDIT_STARTERS_PLUS_MM       1044
 #define IDC_STATIC_MSG_NAME             1045
 #define IDC_EDIT_TIMING_FINISH_TT       1046
 #define IDC_EDIT_TIMING_START_TT        1047
@@ -74,7 +75,10 @@
 #define IDC_BUTTON_BROWSE               1050
 #define IDC_BUTTON_AMPLIFY              1051
 #define IDC_EDIT_AMPLIFY                1052
+#define IDC_EDIT_STARTLISTFILE          1052
 #define IDC_SPIN_AMPLIFY                1053
+#define IDC_BUTTON_BROWSE2              1053
+#define IDC_BUTTON_BROWSE_STARTLIST     1053
 #define IDC_BUTTON_PLAY                 1054
 #define IDC_BUTTON_DAMPEN               1055
 #define IDC_CHECK_SEQUENTIAL            1056

@@ -23,6 +23,8 @@ public:
     CRecording* AddCustomRecord(CString& a_Name, bool a_FinishAtTime, CString a_TimingTime);
     CRecording* AddTimeRecord(bool a_FinishAtTime, CString a_TimingTime, CString a_OffsetTime);
     CRecording* AddTimeRecord(CString& a_FollowMsgName, CString a_OffsetTime);
+	CRecording* AddStartListRecord(bool a_FinishAtTime, CString a_TimingTime, CString a_OffsetTime);
+	CRecording* AddStartListRecord(CString& a_FollowMsgName, CString a_OffsetTime);
 
     bool ReloadFromXML(CString a_XMLFileName);
     bool SaveToXML(CString a_XMLFileName, CString a_StartTime = "14:00", CString a_StopTime = "14:05");
@@ -72,6 +74,7 @@ private:
     CString m_LastError;
 	int m_Version;
     int m_TimeRecordsCreated;
+	int m_StartListRecordsCreated;
     typedef std::map<CString, CRecording*> t_MapType;
     t_MapType m_Map;
     CProgressWnd* m_Progress;

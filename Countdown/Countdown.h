@@ -16,6 +16,7 @@
 #pragma  warning(disable: 4786)
 #include "RecordSound.h"
 #include "RecordCollection.h"
+#include "StartList.h"
  
 
 /////////////////////////////////////////////////////////////////////////////
@@ -29,9 +30,11 @@ public:
 	CCountdownApp();
     CString CustomDir() {return CString(szAppDataPath);};
     CString CustomSoundDir() {return CString (szAppDataSoundPath);};
+	CString CustomNamesDir() { return CString(szAppDataNamesPath); };
 	CString ConfigFile() {return CString (szAppFilePath);};
 	void SetNotifyHwnd(HWND a_Hwnd);
 	void Reload();
+	CStartList& StartList() { return m_StartList; }
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -56,6 +59,7 @@ public:
 		BOOL m_Recording;
 		CRecordSound* m_RecordSound;
 		CWriteSoundFile* m_WriteSound;
+		CStartList m_StartList;
 		
 	protected:
 		BOOL InitRecording();
@@ -67,6 +71,7 @@ public:
         char szAppDataPath[MAX_PATH];
 		char szAppFilePath[MAX_PATH];
         char szAppDataSoundPath[MAX_PATH];
+		char szAppDataNamesPath[MAX_PATH];
 	
 };
 

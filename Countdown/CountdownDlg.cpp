@@ -102,6 +102,7 @@ CCountdownDlg::CCountdownDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CCountdownDlg::IDD, pParent), m_InAdd(false), m_InCreate(false), m_InExit(false),
     m_InterimChange(false), m_ModifyMode(false)
 	, m_StartListFile(_T(""))
+	, m_StartersPlusMM(_T(""))
 {
 	//{{AFX_DATA_INIT(CCountdownDlg)
 	m_ContentMsg = _T("");
@@ -141,6 +142,7 @@ void CCountdownDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_TIMING_FINISH_TT, m_TimingTTCtrl);
 	DDX_Control(pDX, IDC_EDIT_TIMING_FINISH_SS, m_TimingSSCtrl);
 	DDX_Control(pDX, IDC_EDIT_NEXT_PLUS_MM, m_NextPlusMMCtrl);
+	DDX_Control(pDX, IDC_EDIT_STARTERS_PLUS_MM, m_StartersPlusMMCtrl);
 	DDX_Control(pDX, IDC_BUTTON_AMPLIFY, m_AmplifyCtrl);
 	DDX_Control(pDX, IDC_BUTTON_DAMPEN, m_DampenCtrl);
 	DDX_Control(pDX, IDC_BUTTON_MODIFY, m_ModifyCtrl);
@@ -262,6 +264,7 @@ void CCountdownDlg::DoDataExchange(CDataExchange* pDX)
 		}
 	}
 
+
 }
 
 BEGIN_MESSAGE_MAP(CCountdownDlg, CDialog)
@@ -313,6 +316,8 @@ BEGIN_MESSAGE_MAP(CCountdownDlg, CDialog)
 	ON_COMMAND(ID_MENU_RECORDING, &CCountdownDlg::OnMenuRecordingProperties)
 	ON_BN_CLICKED(IDC_BUTTON_BROWSE_STARTLIST, &CCountdownDlg::OnBnClickedButtonBrowseStartlist)
 	ON_EN_CHANGE(IDC_EDIT_STARTLISTFILE, &CCountdownDlg::OnEnChangeEditStartlistfile)
+	ON_BN_CLICKED(IDC_RADIO_CONTENT_STARTERS, &CCountdownDlg::OnBnClickedRadioContentStarters)
+	ON_BN_CLICKED(IDC_BUTTON_GENERATE, &CCountdownDlg::OnBnClickedButtonGenerate)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -680,8 +685,10 @@ void CCountdownDlg::EnableCtrls()
         }
 
     m_ContentMsgCtrl.EnableWindow(IsChecked(IDC_RADIO_CONTENT_MSG) && !m_ModifyMode);
-	m_NextPlusMMCtrl.EnableWindow(!IsChecked(IDC_RADIO_CONTENT_MSG));
+	m_NextPlusMMCtrl.EnableWindow(IsChecked(IDC_RADIO_CONTENT_TIME));
+	m_StartersPlusMMCtrl.EnableWindow(IsChecked(IDC_RADIO_CONTENT_STARTERS));
 	m_ContentRadioCtrl.EnableWindow(!m_ModifyMode);
+
 	static_cast<CButton*>(GetDlgItem(IDC_RADIO_CONTENT_TIME))->EnableWindow(!m_ModifyMode);
 
     m_RelativeCtrl.EnableWindow(IsChecked(IDC_RADIO_FREQ_EVERY));
@@ -825,6 +832,7 @@ void CCountdownDlg::OnButtonAdd()
                                                 m_FreqMsg);
 	else
 		{                               // Its a time like <Next Minute> or a start list like <Starters + 4>
+		bool isStartList = (IsChecked(IDC_RADIO_CONTENT_MSG) && m_ContentMsg.Left(6) == "<Start") || IsChecked(IDC_RADIO_CONTENT_STARTERS);
 		CString nextPlus("00");
 		if (IsChecked(IDC_RADIO_CONTENT_MSG))
 			{
@@ -835,17 +843,24 @@ void CCountdownDlg::OnButtonAdd()
 					break;
 					}
 			}
+		else 
+			nextPlus = isStartList ? m_StartersPlusMM : m_NextPlusMM;		
+		
+		if (isStartList)
+			{
+			if (IsChecked(IDC_RADIO_FREQ_EVERY))
+				newRec = theApp.m_Recs.AddStartListRecord(beforeAfter == "Finishing", timing, nextPlus);
+			else
+				newRec = theApp.m_Recs.AddStartListRecord(m_FreqMsg, nextPlus);
+			}
 		else
-			nextPlus = m_NextPlusMM;
-		
-		
-		if (IsChecked(IDC_RADIO_FREQ_EVERY))
-            newRec = theApp.m_Recs.AddTimeRecord(beforeAfter == "Finishing", 
-                                                timing,
-                                                nextPlus);
-        else
-            newRec = theApp.m_Recs.AddTimeRecord(m_FreqMsg,
-                                                nextPlus);
+			{
+			if (IsChecked(IDC_RADIO_FREQ_EVERY))
+				newRec = theApp.m_Recs.AddTimeRecord(beforeAfter == "Finishing", timing, nextPlus);
+			else
+				newRec = theApp.m_Recs.AddTimeRecord(m_FreqMsg, nextPlus);
+			}
+
 		}
 
     if (!newRec)
@@ -1628,4 +1643,21 @@ void CCountdownDlg::OnEnChangeEditStartlistfile()
 	//m_StartListCtrl.GetWindowText(m_StartListFile);
 	//if (FileExists(m_StartListFile))
 	//	theApp.m_Recs.SetStartListFile(m_StartListFile);
+}
+
+
+void CCountdownDlg::OnBnClickedRadioContentStarters()
+{
+	EnableCtrls();
+}
+
+
+void CCountdownDlg::OnBnClickedButtonGenerate()
+{
+	// Parse the start list to:
+	// 1) Get a map of names for each time
+	// 2) Make sure that we have the sound files for each time
+	if (!FileExists(m_StartListFile))
+		AfxMessageBox("Couldn't open file : " + m_StartListFile + ". It doesn't exist.", MB_OK | MB_APPLMODAL | MB_ICONEXCLAMATION);
+	theApp.StartList().Load(m_StartListFile);
 }

@@ -8,6 +8,7 @@
 #include "RecordCollection.h"
 #include "CustomRecording.h"
 #include "TimeRecording.h"
+#include "StartListRecording.h"
 #include "hightime.h"
 #include "utils.h"
 #include "Wave.h"
@@ -31,7 +32,7 @@ static char THIS_FILE[]=__FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CRecordCollection::CRecordCollection(): m_TimeRecordsCreated(0), m_Progress(NULL)
+CRecordCollection::CRecordCollection(): m_TimeRecordsCreated(0), m_Progress(NULL), m_StartListRecordsCreated(0)
     {
 	m_Frequency = "1:00";
 	m_Version = 2;
@@ -276,6 +277,34 @@ CRecording* CRecordCollection::AddTimeRecord(CString& a_FollowMsgName,
         m_Map[name] = rec;
     return rec;
     }
+
+CRecording* CRecordCollection::AddStartListRecord(bool a_FinishAtTime, CString a_TimingTime, CString a_OffsetTime)
+{
+	if (TimingTimeExists(a_TimingTime))
+	{
+		m_LastError = "Record with offset " + a_TimingTime + " already exists in record collection.";
+		return NULL;
+	}
+
+	CString name;
+	name.Format("StartList Message %i", ++m_StartListRecordsCreated);
+	CStartListRecording* rec = new CStartListRecording(name, a_FinishAtTime, a_TimingTime,
+		a_OffsetTime);
+	if (rec)
+		m_Map[name] = rec;
+	return rec;
+}
+
+CRecording* CRecordCollection::AddStartListRecord(CString& a_FollowMsgName, CString a_OffsetTime)
+{
+	CString name;
+	name.Format("StartList Message %i", ++m_StartListRecordsCreated);
+	CStartListRecording* rec = new CStartListRecording(name, a_FollowMsgName, a_OffsetTime);
+
+	if (rec)
+		m_Map[name] = rec;
+	return rec;
+}
 
 CString CRecordCollection::LastError()
     {

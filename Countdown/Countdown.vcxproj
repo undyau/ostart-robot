@@ -142,6 +142,7 @@
     <ClCompile Include="ColorStatic.cpp" />
     <ClCompile Include="Countdown.cpp" />
     <ClCompile Include="CountdownDlg.cpp" />
+    <ClCompile Include="StartList.cpp" />
     <ClCompile Include="CustomRecording.cpp" />
     <ClCompile Include="DynamicLED.cpp" />
     <ClCompile Include="FileOperations.cpp" />
@@ -155,6 +156,7 @@
     <ClCompile Include="RecordSound.cpp" />
     <ClCompile Include="RecordTimesDlg.cpp" />
     <ClCompile Include="Scheduler.cpp" />
+    <ClCompile Include="StartListRecording.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdafx.h</PrecompiledHeaderFile>
@@ -162,6 +164,10 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="TimeRecording.cpp" />
+    <ClCompile Include="tinyxml2.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Wave.cpp" />
     <ClCompile Include="WaveDisk.cpp" />
@@ -178,6 +184,7 @@
     <ClInclude Include="ColorStatic.h" />
     <ClInclude Include="Countdown.h" />
     <ClInclude Include="CountdownDlg.h" />
+    <ClInclude Include="StartList.h" />
     <ClInclude Include="CustomRecording.h" />
     <ClInclude Include="DynamicLED.h" />
     <ClInclude Include="FileOperations.h" />
@@ -192,8 +199,10 @@
     <ClInclude Include="RecordTimesDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scheduler.h" />
+    <ClInclude Include="StartListRecording.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="TimeRecording.h" />
+    <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="Wave.h" />
     <ClInclude Include="WaveDisk.h" />

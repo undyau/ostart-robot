@@ -77,6 +77,8 @@ public:
 	CString	m_TimingTT;
 	CString	m_NextPlusMM;
 	CString	m_FreqSS;	
+	CEdit m_StartersPlusMMCtrl;
+	CString m_StartersPlusMM;
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides
@@ -175,6 +177,9 @@ public:
 	CString m_StartListFile;
 	afx_msg void OnBnClickedButtonBrowseStartlist();
 	afx_msg void OnEnChangeEditStartlistfile();
+	afx_msg void OnBnClickedRadioContentStarters();
+
+	afx_msg void OnBnClickedButtonGenerate();
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -75,6 +75,8 @@ BOOL CCountdownApp::InitInstance()
 	strcat_s(szAppDataPath, sizeof(szAppDataPath), "\\Undy\\Countdown");
 	strcpy_s(szAppDataSoundPath, 260, szAppDataPath);
     strcat_s(szAppDataSoundPath, sizeof(szAppDataSoundPath), "\\Custom");
+	strcpy_s(szAppDataNamesPath, 260, szAppDataPath);
+	strcat_s(szAppDataNamesPath, sizeof(szAppDataNamesPath), "\\Names");
 	strcpy_s(szAppFilePath, sizeof(szAppFilePath), szAppDataPath);
     strcat_s(szAppFilePath, sizeof(szAppFilePath), "\\forAndy.xml");
 
@@ -83,7 +85,10 @@ BOOL CCountdownApp::InitInstance()
     char temp[MAX_PATH];
     strcpy_s(temp, sizeof(temp), szAppDataSoundPath);
     strcat_s(temp, sizeof(temp), "\\dummy.wav");
-    MakeSureDirectoryPathExists(temp);    
+    MakeSureDirectoryPathExists(temp);  
+	strcpy_s(temp, sizeof(temp), szAppDataNamesPath);
+	strcat_s(temp, sizeof(temp), "\\dummy.wav");
+	MakeSureDirectoryPathExists(temp);
     
 
     m_Recs.ReloadFromXML(szAppFilePath);

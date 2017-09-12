@@ -26,6 +26,8 @@
 #define ID_CANCEL_BTN                   1007
 #define IDC_COMBO_FREQ_MSG              1008
 #define IDC_RADIO_CONTENT_STARTERS      1009
+#define IDC_BUTTON_RECORD2              1010
+#define IDC_BUTTON_GENERATE             1010
 #define IDC_COMBO_CONTENT_FORMAT        1011
 #define IDC_RADIO_TIMING_FINISH         1013
 #define IDC_RADIO_TIMING_START          1014
@@ -77,7 +79,6 @@
 #define IDC_EDIT_AMPLIFY                1052
 #define IDC_EDIT_STARTLISTFILE          1052
 #define IDC_SPIN_AMPLIFY                1053
-#define IDC_BUTTON_BROWSE2              1053
 #define IDC_BUTTON_BROWSE_STARTLIST     1053
 #define IDC_BUTTON_PLAY                 1054
 #define IDC_BUTTON_DAMPEN               1055

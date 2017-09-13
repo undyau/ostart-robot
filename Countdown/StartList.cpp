@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "StartList.h"
 #include "tinyxml2.h"
+#include "utils.h"
+#include "Countdown.h"
 
+extern CCountdownApp theApp;
 
 CStartList::CStartList()
 {
@@ -18,14 +21,6 @@ bool CStartList::Load(CString a_FileName)
 	tinyxml2::XMLDocument doc;
 	doc.LoadFile(a_FileName);
 
-	// Structure of the XML file:
-	// - Element "StartList"      the root Element, which is the 
-	//                       FirstChildElement of the Document
-	// - - Element "TITLE"   child of the root PLAY Element
-	// - - - Text            child of the TITLE Element
-
-	// Navigate to the title, using the convenience function,
-	// with a dangerous lack of error checking.
 	tinyxml2::XMLElement* root = doc.FirstChildElement("StartList");
 	if (root == nullptr)
 		{
@@ -37,23 +32,96 @@ bool CStartList::Load(CString a_FileName)
 	tinyxml2::XMLElement* oclass = root->FirstChildElement("ClassStart");
 	if (oclass == nullptr)
 		{
-		AfxMessageBox("Couldn't process file : " + a_FileName + ". It doesn't contain XML element StartList.", MB_OK | MB_APPLMODAL | MB_ICONEXCLAMATION);
+		AfxMessageBox("Couldn't process file : " + a_FileName + ". It doesn't contain XML element ClassStart.", MB_OK | MB_APPLMODAL | MB_ICONEXCLAMATION);
 		return false;
 		}
 	while (oclass)
 		{
+		tinyxml2::XMLElement* personStart = oclass->FirstChildElement("PersonStart");
+		while (personStart)
+			{
+			CString fname, gname, stime;
+			if (personStart->FirstChildElement("Person"))
+				{
+				if (personStart->FirstChildElement("Person")->FirstChildElement("Name"))
+					{
+					
+					tinyxml2::XMLElement* pname = personStart->FirstChildElement("Person")->FirstChildElement("Name");
+					if (pname->FirstChildElement("Family"))
+						fname = CString(pname->FirstChildElement("Family")->GetText());
+					if (pname->FirstChildElement("Given"))
+						gname = CString((pname->FirstChildElement("Given")->GetText()));
+					}
+				}
+			tinyxml2::XMLElement* start = personStart->FirstChildElement("Start");
+			if (start && start->FirstChildElement("StartTime"))
+				stime = start->FirstChildElement("StartTime")->GetText();
 
+			AddStarter(gname, fname, stime);
+
+			personStart = personStart->NextSiblingElement("PersonStart");
+			}
+		oclass = oclass->NextSiblingElement("ClassStart");
 		}
-	AfxMessageBox("Couldn't process file : " + a_FileName + ". It doesn't contain XML element ClassStart.", MB_OK | MB_APPLMODAL | MB_ICONEXCLAMATION);
-	printf("Name of play (1): %s\n", title);
 
-	// Text is just another Node to TinyXML-2. The more
-	// general way to get to the XMLText:
-	XMLText* textNode = doc.FirstChildElement("PLAY")->FirstChildElement("TITLE")->FirstChild()->ToText();
-	title = textNode->Value();
-	printf("Name of play (2): %s\n", title);
-	return false;
+	return true;
 }
+
+bool CStartList::AddStarter(CString const & a_GivenName, CString const & a_FamilyName, CString const & a_StartTime)
+	{
+	if (m_StartTimes.find(a_StartTime) != m_StartTimes.end())
+		m_StartTimes[a_StartTime] = m_StartTimes[a_StartTime] + "," + a_GivenName + " " + a_FamilyName;
+	else
+		m_StartTimes[a_StartTime] = a_GivenName + " " + a_FamilyName;
+
+	if (!GotNameSound(a_GivenName))
+		if (!CreateNameSound(a_GivenName))
+			return false;
+	if (!GotNameSound(a_FamilyName))
+		if (!CreateNameSound(a_FamilyName))
+			return false;
+
+	return true;
+	}
+
+bool CStartList::GotNameSound(CString const & a_Name)
+	{
+	CString name = ToFileName(NormaliseName(a_Name));
+	return FileExists(theApp.CustomNamesDir() + "\\" + name + ".wav");
+	}
+
+bool CStartList::CreateNameSound(CString const & a_Name)
+	{
+	theApp.CreateNameSound(a_Name, ToFileName(NormaliseName(a_Name)));
+	return false;
+	}
+
+CString CStartList::NormaliseName(CString const & a_Name)
+	{
+	CString name(a_Name);
+	name.Replace("&apos;", "'");
+	name.Replace("&amp;", "&");
+	name.Replace("&quot;", "\"");
+	name.Replace("&lt;", "<");
+	name.Replace("&gt;", ">");
+
+	return name;
+	}
+
+CString CStartList::ToFileName(CString const & a_Name)
+	{
+	CString result(a_Name);
+
+	result.Replace('<','_');
+	result.Replace('>', '_');
+	result.Replace(':', '_');
+	result.Replace('/', '_');
+	result.Replace('\\', '_');
+	result.Replace('|', '_');
+	result.Replace('?', '_');
+	result.Replace('*', '_');
+	return result;
+	}
 
 
 /*

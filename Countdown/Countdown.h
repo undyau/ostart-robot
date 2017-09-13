@@ -17,6 +17,7 @@
 #include "RecordSound.h"
 #include "RecordCollection.h"
 #include "StartList.h"
+#include "TTSGenerator.h"
  
 
 /////////////////////////////////////////////////////////////////////////////
@@ -35,6 +36,7 @@ public:
 	void SetNotifyHwnd(HWND a_Hwnd);
 	void Reload();
 	CStartList& StartList() { return m_StartList; }
+	bool CreateNameSound(CString const & a_Name, CString const & a_FileName);
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -60,6 +62,7 @@ public:
 		CRecordSound* m_RecordSound;
 		CWriteSoundFile* m_WriteSound;
 		CStartList m_StartList;
+		CTTSGenerator m_TTSGenerator;
 		
 	protected:
 		BOOL InitRecording();

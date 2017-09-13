@@ -168,6 +168,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TTSGenerator.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Wave.cpp" />
     <ClCompile Include="WaveDisk.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="TimeRecording.h" />
     <ClInclude Include="tinyxml2.h" />
+    <ClInclude Include="TTSGenerator.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="Wave.h" />
     <ClInclude Include="WaveDisk.h" />

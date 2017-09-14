@@ -57,7 +57,8 @@ bool CStartList::Load(CString a_FileName)
 			if (start && start->FirstChildElement("StartTime"))
 				stime = start->FirstChildElement("StartTime")->GetText();
 
-			AddStarter(gname, fname, stime);
+			if (!AddStarter(gname, fname, stime))
+				return false;
 
 			personStart = personStart->NextSiblingElement("PersonStart");
 			}
@@ -92,8 +93,7 @@ bool CStartList::GotNameSound(CString const & a_Name)
 
 bool CStartList::CreateNameSound(CString const & a_Name)
 	{
-	theApp.CreateNameSound(a_Name, ToFileName(NormaliseName(a_Name)));
-	return false;
+	return theApp.CreateNameSound(a_Name, theApp.CustomNamesDir() + "\\" + ToFileName(NormaliseName(a_Name)) + ".wav");
 	}
 
 CString CStartList::NormaliseName(CString const & a_Name)

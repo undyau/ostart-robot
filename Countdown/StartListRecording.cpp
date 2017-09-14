@@ -81,7 +81,56 @@ CStartListRecording::~CStartListRecording()
 
 float CStartListRecording::MaxDuration()
     {
-    return CStartListRecording::MaxDurationHHMM();
+	if (CStartListRecording::s_MaxDurationHHMM != 0)
+		return CStartListRecording::s_MaxDurationHHMM;
+
+	// Find out where files are
+	char szAppPath[MAX_PATH] = "";
+	CString strAppName, customDir, defaultDir;
+
+	::GetModuleFileName(0, szAppPath, MAX_PATH);
+
+	strAppName = szAppPath;
+	strAppName = strAppName.Left(strAppName.ReverseFind('\\'));
+
+	customDir = theApp.CustomSoundDir();
+	defaultDir.Format("%s\\sounds", strAppName);
+
+	// Longest times are the on the hour times, so just read through them
+
+	CString name;
+	float maximum(0), current;
+	for (int i = 0; i < 24; i++)
+		{
+		name.Format("%s\\cdhour%02d.wav", customDir, i);
+		struct _stat buf;
+		if (::_stat(name, &buf) == 0) // file exists
+			{
+			CWave temp(name);
+			if (!temp.IsValid()) throw temp.LastError();
+			current = temp.getDuration();
+			if (current > maximum)
+				maximum = current;
+			}
+		else
+			{
+			name.Format("%s\\cdhour%02d.wav", defaultDir, i);
+			if (::_stat(name, &buf) == 0) // file exists
+				{
+				CWave temp(name);
+				if (!temp.IsValid()) throw temp.LastError();
+				current = temp.getDuration();
+				if (current > maximum)
+					maximum = current;
+				}
+			else
+				{
+				throw "Couldn't find the application file " + name;
+				}
+			}
+		}
+
+	return maximum;
     }
 
 CHighTimeSpan CStartListRecording::RealDuration(CHighTime a_Time)
@@ -162,56 +211,7 @@ float CStartListRecording::FileDuration(CString a_File)
 
 float CStartListRecording::MaxDurationHHMM()
     {
-    if (CStartListRecording::s_MaxDurationHHMM != 0)
-        return CStartListRecording::s_MaxDurationHHMM;
 
-    // Find out where files are
-    char szAppPath[MAX_PATH] = "";
-    CString strAppName, customDir, defaultDir;
-
-    ::GetModuleFileName(0, szAppPath, MAX_PATH);
-
-    strAppName = szAppPath;
-    strAppName = strAppName.Left(strAppName.ReverseFind('\\'));
-
-    customDir = theApp.CustomSoundDir();
-    defaultDir.Format("%s\\sounds", strAppName);
-
-    // Longest times are the on the hour times, so just read through them
-       
-    CString name;
-    float maximum(0), current;
-    for (int i = 0; i < 24; i++)
-        {
-        name.Format("%s\\cdhour%02d.wav", customDir, i);
-        struct _stat buf;
-        if (::_stat(name, &buf) == 0) // file exists
-            {
-            CWave temp(name);
-			if (!temp.IsValid()) throw temp.LastError();
-            current = temp.getDuration();
-            if (current > maximum)
-                maximum = current;            
-            }
-        else
-            {
-            name.Format("%s\\cdhour%02d.wav", defaultDir, i);
-            if (::_stat(name, &buf) == 0) // file exists
-                {
-                CWave temp(name);
-				if (!temp.IsValid()) throw temp.LastError();
-                current = temp.getDuration();
-                if (current > maximum)
-                    maximum = current;            
-                }
-            else
-                {
-                throw "Couldn't find the application file " + name;            
-                }
-            }
-        }     
-
-    return maximum;
     }
 
 float CStartListRecording::MaxDurationMM()

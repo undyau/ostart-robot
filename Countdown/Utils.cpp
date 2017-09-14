@@ -70,6 +70,12 @@ CHighTimeSpan MM2Span(CString a_Time)
     return retVal;
     }
 
+CHighTime ToCHighTime(CString a_XmlTime)
+	{
+	// 
+	return CHighTime();
+	}
+
 CString Word(const CString a_Text, const unsigned int a_Index, const char a_Delim, const CString a_DefaultValue)
     {
     unsigned int i;

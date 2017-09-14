@@ -70,10 +70,7 @@ bool CStartList::Load(CString a_FileName)
 
 bool CStartList::AddStarter(CString const & a_GivenName, CString const & a_FamilyName, CString const & a_StartTime)
 	{
-	if (m_StartTimes.find(a_StartTime) != m_StartTimes.end())
-		m_StartTimes[a_StartTime] = m_StartTimes[a_StartTime] + "," + a_GivenName + " " + a_FamilyName;
-	else
-		m_StartTimes[a_StartTime] = a_GivenName + " " + a_FamilyName;
+	m_StartTimes.insert(std::pair<CString, std::pair<CString, CString>>(ToCHighTime(a_StartTime), std::pair<CString,CString>(a_GivenName, a_FamilyName)));
 
 	if (!GotNameSound(a_GivenName))
 		if (!CreateNameSound(a_GivenName))

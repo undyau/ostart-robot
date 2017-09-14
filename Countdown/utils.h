@@ -4,6 +4,7 @@ CString Word(const CString a_Text, const unsigned int a_Index=0, const char a_De
 CHighTimeSpan FloatSecsToSpan(float a_Secs);
 CHighTimeSpan HHMMSST2Span(CString a_Time);
 CHighTimeSpan MM2Span(CString a_Time);
+CHighTime ToCHighTime(CString a_XmlTime);
 float SpanToFloatSecs(CHighTimeSpan& a_Span);
 bool FileExists(CString a_File);
 bool CopyAppendWaveFile(CString a_Source, CString a_Target);

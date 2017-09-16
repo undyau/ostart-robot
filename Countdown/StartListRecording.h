@@ -20,17 +20,13 @@ public:
     virtual ~CStartListRecording();
     virtual float MaxDuration();
     virtual int ImageIndex();
-    static float MaxDurationHHMM();
-    static float MaxDurationMM();
-    static float MaxDurationSS();
     static float FileDuration(CString a_File);
 	virtual bool IsGenerated() {return true;};
 
     virtual CHighTimeSpan RealDuration(CHighTime a_Time);
     virtual bool AppendSoundToFile(CHighTime a_Time, CString& a_FileName);
 
-    static float s_MaxDurationHHMM;
-    static float s_MaxDurationMM;
+    static float s_MaxDuration;
 	CString OffsetTime() {return m_OffsetTime;}
 	CString OffsetTime(CString& a_OffsetTime) {return m_OffsetTime = a_OffsetTime;}
 
@@ -42,6 +38,5 @@ private:
     CString m_OffsetTime; //MM
 
     CString FileLocation(CString a_File);
-    void Init();
 };
 

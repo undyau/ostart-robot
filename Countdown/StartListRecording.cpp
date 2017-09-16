@@ -18,8 +18,8 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 
-float CStartListRecording::s_MaxDurationHHMM = 0;
-float CStartListRecording::s_MaxDurationMM = 0;
+float CStartListRecording::s_MaxDuration= 0;
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -29,7 +29,6 @@ CStartListRecording::CStartListRecording(CString& a_Name, bool a_FinishAtTime,
     CRecording(a_Name, a_FinishAtTime,  a_TimingTime),
     m_OffsetTime(a_OffsetTime)
     {
-    Init();
     }
 
 CStartListRecording::CStartListRecording(CString& a_Name, CString& a_AfterMsg, 
@@ -37,7 +36,6 @@ CStartListRecording::CStartListRecording(CString& a_Name, CString& a_AfterMsg,
     CRecording(a_Name, a_AfterMsg), 
     m_OffsetTime(a_OffsetTime)
     {
-    Init();
     }
 
 CStartListRecording::CStartListRecording(CString& a_SerialisedXml) : CRecording(a_SerialisedXml)
@@ -46,33 +44,17 @@ CStartListRecording::CStartListRecording(CString& a_SerialisedXml) : CRecording(
     GetXMLValue(a_SerialisedXml, VARBITS(m_OffsetTime));
 
     #undef VARBITS
-    Init();
     }
 
 CString CStartListRecording::GetSerialisedXML()
     {    
     #define VARBITS(a) #a, a
 
-    return ToXML("Type", "Timed") +
+    return ToXML("Type", "StartList") +
         CRecording::GetSerialisedXML() +  
         ToXML(VARBITS(m_OffsetTime));
 
     #undef VARBITS    
-    }
-
-void CStartListRecording::Init()
-    {
-    char szAppPath[MAX_PATH] = "";
-    CString strAppName;
-
-    ::GetModuleFileName(0, szAppPath, MAX_PATH);
-
-    strAppName = szAppPath;
-    strAppName = strAppName.Left(strAppName.ReverseFind('\\'));
-
-    m_CustomDir = theApp.CustomSoundDir();
-    m_NamesDir = theApp.CustomNamesDir();
-    m_DefaultDir.Format("%s\\sounds", strAppName);
     }
 
 CStartListRecording::~CStartListRecording()
@@ -80,265 +62,93 @@ CStartListRecording::~CStartListRecording()
     }
 
 float CStartListRecording::MaxDuration()
-    {
-	if (CStartListRecording::s_MaxDurationHHMM != 0)
-		return CStartListRecording::s_MaxDurationHHMM;
+	{
+	if (CStartListRecording::s_MaxDuration != 0)
+		return CStartListRecording::s_MaxDuration;
 
-	// Find out where files are
-	char szAppPath[MAX_PATH] = "";
-	CString strAppName, customDir, defaultDir;
-
-	::GetModuleFileName(0, szAppPath, MAX_PATH);
-
-	strAppName = szAppPath;
-	strAppName = strAppName.Left(strAppName.ReverseFind('\\'));
-
-	customDir = theApp.CustomSoundDir();
-	defaultDir.Format("%s\\sounds", strAppName);
-
-	// Longest times are the on the hour times, so just read through them
-
-	CString name;
-	float maximum(0), current;
-	for (int i = 0; i < 24; i++)
+	// Check out each minute in the startlist
+	std::vector<CHighTime> starts = theApp.StartList().StartTimes();
+	float timeMax(0);
+	for (auto i = starts.begin(); i != starts.end(); i++)
 		{
-		name.Format("%s\\cdhour%02d.wav", customDir, i);
-		struct _stat buf;
-		if (::_stat(name, &buf) == 0) // file exists
+		// Sum the time for each name + gaps
+		float timeTotal(0);
+		std::vector<CString> names = theApp.StartList().StartersAtTime(*i);
+		CString name;
+		for (auto j = names.begin(); j != names.end(); j++)
 			{
+			name = theApp.StartList().FileNameOfName(*j);
+			if (!FileExists(name))
+				throw "Couldn't find the sound file " + name;
 			CWave temp(name);
 			if (!temp.IsValid()) throw temp.LastError();
-			current = temp.getDuration();
-			if (current > maximum)
-				maximum = current;
+			timeTotal += temp.getDuration();
 			}
-		else
-			{
-			name.Format("%s\\cdhour%02d.wav", defaultDir, i);
-			if (::_stat(name, &buf) == 0) // file exists
-				{
-				CWave temp(name);
-				if (!temp.IsValid()) throw temp.LastError();
-				current = temp.getDuration();
-				if (current > maximum)
-					maximum = current;
-				}
-			else
-				{
-				throw "Couldn't find the application file " + name;
-				}
-			}
+		if (names.size())
+			timeTotal += (names.size() - 1) * BIG_GAP_SIZE;
+		timeMax = max(timeTotal, timeMax);
 		}
+	CStartListRecording::s_MaxDuration = timeMax;
 
-	return maximum;
-    }
+	return timeMax;
+	}
+
 
 CHighTimeSpan CStartListRecording::RealDuration(CHighTime a_Time)
     {
-    CString file;
-    CHighTimeSpan retVal;
-    
-    CHighTime spokenTime;
-
+    CHighTimeSpan retVal;    
     CHighTimeSpan offset = MM2Span(m_OffsetTime);
-    spokenTime = a_Time + offset;
-    
-    int hr = spokenTime.GetHour();
+	CHighTime startTime = a_Time + offset;
 
-    if (spokenTime.GetMinute() == 0)
-        {
-        file.Format("cdhour%02d.wav", spokenTime.GetHour());
-        return FloatSecsToSpan(FileDuration(file));
-        }
-    if (hr > 0 && hr < 10)
-        file.Format("cdnum%01d.wav", hr);
-    else
-        file.Format("cdnum%02d.wav", hr);
-    retVal = FloatSecsToSpan(FileDuration(file));
-    file.Format("cdnum%02d.wav", spokenTime.GetMinute());
-    retVal += FloatSecsToSpan(FileDuration(file));
-    retVal += FloatSecsToSpan((float) SHORT_GAP_SIZE);
+	float timeTotal(0);
+	std::vector<CString> names = theApp.StartList().StartersAtTime(startTime);
+	CString name;
+	for (auto j = names.begin(); j != names.end(); j++)
+		{
+		name = theApp.StartList().FileNameOfName(*j);
+		if (!FileExists(name))
+			throw "Couldn't find the sound file " + name;
+		CWave temp(name);
+		if (!temp.IsValid()) throw temp.LastError();
+		timeTotal += temp.getDuration();
+		}
+	if (names.size())
+		timeTotal += (names.size() - 1) * BIG_GAP_SIZE;
+	retVal = FloatSecsToSpan(timeTotal);
+
     return retVal;
     }
 
-float CStartListRecording::FileDuration(CString a_File)
-    {
-    // Find out where file is
-    char szAppPath[MAX_PATH] = "";
-    CString strAppName, customDir, defaultDir;
-
-    ::GetModuleFileName(0, szAppPath, MAX_PATH);
-
-    strAppName = szAppPath;
-    strAppName = strAppName.Left(strAppName.ReverseFind('\\'));
-
-    customDir = theApp.CustomSoundDir();
-    defaultDir.Format("%s\\sounds", strAppName);
-
-    // Get file length
-    CString name;
-    name.Format("%s\\%s", customDir, a_File);
-    struct _stat buf;
-    if (::_stat(name, &buf) == 0) // file exists
-        {
-        CWave temp(name);
-		if (temp.IsValid())
-			return temp.getDuration();
-		else
-			{
-			AfxMessageBox(temp.LastError(), MB_ICONEXCLAMATION);
-			throw temp.LastError();
-			}
-        }
-
-    name.Format("%s\\%s", defaultDir, a_File);
-
-    if (::_stat(name, &buf) == 0) // file exists
-        {
-        CWave temp(name);
-		if (temp.IsValid())
-			return temp.getDuration();
-		else
-			{
-			AfxMessageBox(temp.LastError(), MB_ICONEXCLAMATION);
-			throw temp.LastError();
-			}
-        }
-    
-    AfxMessageBox("Couldn't find the application file " + name);            
-    throw "Couldn't find the application file " + name;
-    }
-
-float CStartListRecording::MaxDurationHHMM()
-    {
-
-    }
-
-float CStartListRecording::MaxDurationMM()
-    {
-    if (CStartListRecording::s_MaxDurationMM != 0)
-        return CStartListRecording::s_MaxDurationMM;
-
-    // Find out where files are
-    char szAppPath[MAX_PATH] = "";
-    CString strAppName, customDir, defaultDir;
-
-    ::GetModuleFileName(0, szAppPath, MAX_PATH);
-
-    strAppName = szAppPath;
-    strAppName = strAppName.Left(strAppName.ReverseFind('\\'));
-
-    customDir = theApp.CustomSoundDir();
-    defaultDir.Format("%s\\sounds", strAppName);
-
-    // Check out each minute
-       
-    CString name;
-    float maximum(0), current;
-    for (int i = 1; i < 60; i++)
-        {
-        name.Format("%s\\cdnum%02d.wav", customDir, i);
-        struct _stat buf;
-        if (::_stat(name, &buf) == 0) // file exists
-            {
-            CWave temp(name);
-			if (!temp.IsValid()) throw temp.LastError();
-            current = temp.getDuration();
-            if (current > maximum)
-                maximum = current;            
-            }
-        else
-            {
-            name.Format("%s\\cdnum%02d.wav", defaultDir, i);
-            if (::_stat(name, &buf) == 0) // file exists
-                {
-                CWave temp(name);
-				if (!temp.IsValid()) throw temp.LastError();
-                current = temp.getDuration();
-                if (current > maximum)
-                    maximum = current;            
-                }
-            else
-                {
-                throw "Couldn't find the application file " + name;            
-                }
-            }
-        }     
-
-    return maximum;
-    }
-
-float CStartListRecording::MaxDurationSS()
-    {
-    return MaxDurationMM();
-    }
 
 bool CStartListRecording::AppendSoundToFile(CHighTime a_Time, CString& a_FileName)
     {
-    CString file;
-    CHighTimeSpan retVal;
-    
-
-    CHighTime spokenTime;
     CHighTimeSpan offset = MM2Span(m_OffsetTime);
-        spokenTime = a_Time + offset;
+	CHighTime startTime = a_Time + offset;
 
+	std::vector<CString> names = theApp.StartList().StartersAtTime(startTime);
+	CString name;
 
-    int hr = spokenTime.GetHour();
+	unsigned int i(0);
+	for (auto j = names.begin(); j != names.end(); j++)
+		{
+		name = theApp.StartList().FileNameOfName(*j);
+		if (!FileExists(name))
+			throw "Couldn't find the sound file " + name;
 
-    if (spokenTime.GetMinute() == 0)
-        {
-        file.Format("cdhour%02d.wav", spokenTime.GetHour());
-        return CopyAppendWaveFile(FileLocation(file), a_FileName);
-        }
-
-    if (hr > 0 && hr < 10)
-        file.Format("cdnum%01d.wav", spokenTime.GetHour());
-    else
-        file.Format("cdnum%02d.wav", spokenTime.GetHour());
-    if (CopyAppendWaveFile(FileLocation(file), a_FileName))
-        {
-        CWave wave(a_FileName);
-		if (!wave.IsValid()) throw wave.LastError();
-        wave.AddBlank((float)SHORT_GAP_SIZE);
-        
-        file.Format("cdnum%02d.wav", spokenTime.GetMinute());              
-        CWave waveMM(FileLocation(file));
-		if (!waveMM.IsValid()) throw waveMM.LastError();
-        wave.AddWave(waveMM);
-        wave.saveToFile();
-        return true;
-        }
-    else
-        return false;
-    }
-
-
-CString CStartListRecording::FileLocation(CString a_File)
-    {
-    // Find out where files are
-    CString name;
-    name.Format("%s\\%s", m_CustomDir, a_File);
-
-    struct _stat buf;
-    if (::_stat(name, &buf) == 0) // file exists
-        {
-        return name;
-        }
-    else
-        {
-        name.Format("%s\\%s", m_DefaultDir, a_File);
-        if (::_stat(name, &buf) == 0) // file exists
-            {
-            return name;
-            }
-        else
-            {
-            AfxMessageBox("Couldn't find the application file " + name);            
-            throw;
-            }
-        }     
-
+		if (CopyAppendWaveFile(name, a_FileName))
+			{
+			if (++i < names.size())
+				{
+				CWave wave(a_FileName);
+				if (!wave.IsValid()) throw wave.LastError();
+				wave.AddBlank((float)BIG_GAP_SIZE);
+				wave.saveToFile();
+				}
+			}
+		else
+			return false;
+		}
+	return true;
     }
 
 int CStartListRecording::ImageIndex() 

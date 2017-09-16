@@ -839,7 +839,7 @@ void CCountdownDlg::OnButtonAdd()
 			for (int i = 0; i < m_ContentMsg.GetLength(); i++)
 				if (isdigit(m_ContentMsg[i]))
 					{
-					nextPlus = "0" + m_ContentMsg[i];
+					nextPlus.Format("0%c", m_ContentMsg[i]);
 					break;
 					}
 			}

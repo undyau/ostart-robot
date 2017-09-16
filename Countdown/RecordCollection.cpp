@@ -93,7 +93,9 @@ bool CRecordCollection::ReloadFromXML(CString a_XMLFileName)
         CRecording* rec;
         if (type == "Timed")
             rec = new CTimeRecording(record);
-        else
+        else if (type == "StartList")
+			rec = new CStartListRecording(record);
+		else
             rec = new CCustomRecording(record);
         if (rec)
             m_Map[rec->Name()] = rec;

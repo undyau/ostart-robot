@@ -3,6 +3,8 @@
 #include "HighTime.h"
 #include <sys/stat.h>
 #include "Wave.h"
+#include <ATLComTime.h >
+#include <time.h>
 
 CHighTimeSpan FloatSecsToSpan(float a_Secs)
     {
@@ -70,10 +72,48 @@ CHighTimeSpan MM2Span(CString a_Time)
     return retVal;
     }
 
-CHighTime ToCHighTime(CString a_XmlTime)
+bool ToCHighTime(CString a_XmlTime, CHighTime& a_OutputTime)
 	{
-	// 
-	return CHighTime();
+	// 2017-09-24T10:26:00.000     (OE from Ron)
+	// 2012-12-26T14:36:07Z        (IOF example)
+	// 2012-12-26T15:36:07+01:00   (IOF example)
+	// 2012-12-26T08:36:07.9-06:00 (IOF example)
+	// 2017-09-16T10:45:00+10:00   (MEOS example)
+	// 2017-09-16T01:30:00Z        (MEOS using UTC)
+
+/*	CHighTime(const LARGE_INTEGER dateSrc);
+	CHighTime(const LONGLONG dateSrc);
+#if defined(USE_MFC)
+	CHighTime(const COleDateTime &dateSrc);
+	CHighTime(const CTime &dateSrc);
+#endif
+	CHighTime(const SYSTEMTIME &systimeSrc);
+	CHighTime(const FILETIME &filetimeSrc);
+	//	CHighTime(const time_t timeSrc);
+	CHighTime(int nYear, int nMonth, int nDay,
+		int nHour, int nMinute, int nSecond,
+		int nMilli = 0, int nMicro = 0, int nNano = 0);
+
+	tm outtime;
+	strptime(a_Time, "", &tm,);*/
+	int nYear, nMonth, nDay, nHour, nMinute, nSecond;
+
+	if (a_XmlTime.Right(1) != "Z")
+		{
+		nYear = atoi(a_XmlTime.Left(4));
+		nMonth = atoi(a_XmlTime.Mid(5, 2));
+		nDay = atoi(a_XmlTime.Mid(8, 2));
+		nHour = atoi(a_XmlTime.Mid(11, 2));
+		nMinute = atoi(a_XmlTime.Mid(14, 2));
+		nSecond = atoi(a_XmlTime.Mid(13, 2));
+		a_OutputTime = CHighTime(nYear, nMonth, nDay, nHour, nMinute, nSecond);
+		return true;
+		}
+	else
+		{
+		AfxMessageBox("Couldn't parse time " + a_XmlTime + " start times in UTC are not yet supported", MB_OK | MB_APPLMODAL | MB_ICONEXCLAMATION);
+		return false;
+		}
 	}
 
 CString Word(const CString a_Text, const unsigned int a_Index, const char a_Delim, const CString a_DefaultValue)

@@ -68,29 +68,55 @@ bool CStartList::Load(CString a_FileName)
 	return true;
 }
 
+std::vector<CHighTime> CStartList::StartTimes()
+	{
+	std::vector<CHighTime> result;
+	for (auto it = m_StartTimes.begin(), end = m_StartTimes.end(); it != end; it = m_StartTimes.upper_bound(it->first))
+		result.push_back (it->first);
+	return result;
+	}
+
+std::vector<CString> CStartList::StartersAtTime(CHighTime a_Time)
+	{
+	std::vector<CString> result;
+	std::pair <std::multimap<CHighTime, CString>::iterator, std::multimap<CHighTime, CString>::iterator> ret;
+	ret = m_StartTimes.equal_range(a_Time);
+	for (std::multimap<CHighTime, CString>::iterator it = ret.first; it != ret.second; ++it)
+		result.push_back(it->second);
+	return result;
+	}
+
+CString CStartList::FileNameOfName(CString a_Name)
+	{
+	return theApp.CustomNamesDir() + "\\" + ToFileName(NormaliseName(a_Name)) + ".wav";
+	}
+
 bool CStartList::AddStarter(CString const & a_GivenName, CString const & a_FamilyName, CString const & a_StartTime)
 	{
-	m_StartTimes.insert(std::pair<CString, std::pair<CString, CString>>(ToCHighTime(a_StartTime), std::pair<CString,CString>(a_GivenName, a_FamilyName)));
+	CHighTime tm;
+	if (!ToCHighTime(a_StartTime, tm))
+		return false;
+	CString name(a_GivenName + " " + a_FamilyName);
+	m_StartTimes.insert(std::pair<CHighTime, CString>(tm, name));
 
-	if (!GotNameSound(a_GivenName))
-		if (!CreateNameSound(a_GivenName))
+	if (!GotNameSound(name))
+		if (!CreateNameSound(name))
 			return false;
-	if (!GotNameSound(a_FamilyName))
+/*	if (!GotNameSound(a_FamilyName))
 		if (!CreateNameSound(a_FamilyName))
-			return false;
+			return false;*/
 
 	return true;
 	}
 
 bool CStartList::GotNameSound(CString const & a_Name)
 	{
-	CString name = ToFileName(NormaliseName(a_Name));
-	return FileExists(theApp.CustomNamesDir() + "\\" + name + ".wav");
+	return FileExists(FileNameOfName(a_Name));
 	}
 
 bool CStartList::CreateNameSound(CString const & a_Name)
 	{
-	return theApp.CreateNameSound(a_Name, theApp.CustomNamesDir() + "\\" + ToFileName(NormaliseName(a_Name)) + ".wav");
+	return theApp.CreateNameSound(a_Name, FileNameOfName(a_Name));
 	}
 
 CString CStartList::NormaliseName(CString const & a_Name)

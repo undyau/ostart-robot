@@ -182,8 +182,11 @@ bool CRecordCollection::SaveToXML(CString a_XMLFileName, CString a_StartTime, CS
 // Sort into the order that we want them listed 
     CRecording** vec = GetSortedRecords();
 
-    for (unsigned int i = 0; i < m_Map.size(); i++)
-        theXML += ToXML("Record", vec[i]->GetSerialisedXML());
+	for (unsigned int i = 0; i < m_Map.size(); i++)
+		{
+		CString rec = vec[i]->GetSerialisedXML();
+		theXML += ToXML("Record", rec);
+		}
 
     delete [] vec;
 
@@ -444,7 +447,7 @@ bool CRecordCollection::MakeRecording(CString a_First, CString& a_Last, CString&
             {
 // ie how long do any preceding snips this rec follows take ?            
             CHighTime t = OffsetStartTime(rec, progress);
-            TRACE("Starting %s at %s\n", rec->Name(), t.Format("%H:%M:%S.%s"));
+            TRACE("Starting %s at %s\n", rec->Name(), HighTimeAsStr(t));
             timeLine[t] = rec;
             realTimes[t] = progress;
             progress = progress + Every;
@@ -554,7 +557,7 @@ bool CRecordCollection::MakeRecording(CString a_First, CString& a_Last, CString&
     SetProgressWndRange(0, timeLine.size() + 1);        
     for (; titer != timeLine.end(); titer++)
         {
-        SetProgressWndText("Creating Sounds","Creating sound for time %s", (*titer).first.Format("%H:%M:%S"));  
+        SetProgressWndText("Creating Sounds","Creating sound for time %s", HighTimeAsStr((*titer).first));
         StepProgressWnd();
 
 		CHighTime temp = (*titer).first;

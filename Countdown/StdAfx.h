@@ -22,7 +22,7 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 #define SHORT_GAP_SIZE 0.05f
-#define BIG_GAP_SIZE 0.35f
+#define BIG_GAP_SIZE 0.15f
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

@@ -28,6 +28,11 @@ bool CStartList::Load(CString a_FileName)
 		return false;
 		}
 
+    // Create sound for empty time slots
+	if (!GotNameSound("No Starters"))
+		if (!CreateNameSound("No Starters"))
+			return false;
+
 	// Iterate over all classes
 	tinyxml2::XMLElement* oclass = root->FirstChildElement("ClassStart");
 	if (oclass == nullptr)
@@ -98,6 +103,7 @@ bool CStartList::AddStarter(CString const & a_GivenName, CString const & a_Famil
 		return false;
 	CString name(a_GivenName + " " + a_FamilyName);
 	m_StartTimes.insert(std::pair<CHighTime, CString>(tm, name));
+	TRACE2("Added starter %s for %s\n",name, HighTimeAsStr(tm));
 
 	if (!GotNameSound(name))
 		if (!CreateNameSound(name))

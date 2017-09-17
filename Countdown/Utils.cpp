@@ -41,6 +41,13 @@ float SpanToFloatSecs(CHighTimeSpan& a_Span)
     return result;
 	}
 
+CString HighTimeAsStr(CHighTime const & a_Time)
+	{
+	CString s;
+	s.Format("%2.2d/%2.2d/%4.4d %s", a_Time.GetDay(), a_Time.GetMonth(), a_Time.GetYear(), a_Time.Format("%H:%M:%S.%s"));
+	return s;
+	}
+
 CHighTimeSpan HHMMSST2Span(CString a_Time)
     {
     int hours, mins, secs, milli(0);
@@ -100,13 +107,14 @@ bool ToCHighTime(CString a_XmlTime, CHighTime& a_OutputTime)
 
 	if (a_XmlTime.Right(1) != "Z")
 		{
-		nYear = atoi(a_XmlTime.Left(4));
+	/*	nYear = atoi(a_XmlTime.Left(4));
 		nMonth = atoi(a_XmlTime.Mid(5, 2));
-		nDay = atoi(a_XmlTime.Mid(8, 2));
+		nDay = atoi(a_XmlTime.Mid(8, 2));*/
+		a_OutputTime = CHighTime();
 		nHour = atoi(a_XmlTime.Mid(11, 2));
 		nMinute = atoi(a_XmlTime.Mid(14, 2));
-		nSecond = atoi(a_XmlTime.Mid(13, 2));
-		a_OutputTime = CHighTime(nYear, nMonth, nDay, nHour, nMinute, nSecond);
+		nSecond = atoi(a_XmlTime.Mid(17, 2));
+		a_OutputTime.SetTime(nHour, nMinute, nSecond);
 		return true;
 		}
 	else

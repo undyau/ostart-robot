@@ -611,12 +611,10 @@ void CCountdownDlg::PopulateCombos()
 	m_ContentMsgCtrl.AddString("<Next Minute + 1>");
 	m_ContentMsgCtrl.AddString("<Next Minute + 2>");
 	m_ContentMsgCtrl.AddString("<Next Minute + 3>");
-	m_ContentMsgCtrl.AddString("<Next Minute + 4>");
-	m_ContentMsgCtrl.AddString("<Starters + 1>");
-	m_ContentMsgCtrl.AddString("<Starters + 2>");
-	m_ContentMsgCtrl.AddString("<Starters + 3>");
-	m_ContentMsgCtrl.AddString("<Starters + 4>");
-	m_ContentMsgCtrl.AddString("<Starters + 5>");
+	m_ContentMsgCtrl.AddString("<Next Starters>");
+	m_ContentMsgCtrl.AddString("<Next + 1 Starters>");
+	m_ContentMsgCtrl.AddString("<Next + 2 Starters>");
+	m_ContentMsgCtrl.AddString("<Next + 3 Starters>");
 
 
     result = !!finder.FindFile(theApp.CustomSoundDir() + "\\*.wav");
@@ -831,8 +829,8 @@ void CCountdownDlg::OnButtonAdd()
             newRec = theApp.m_Recs.AddCustomRecord(m_ContentMsg,
                                                 m_FreqMsg);
 	else
-		{                               // Its a time like <Next Minute> or a start list like <Starters + 4>
-		bool isStartList = (IsChecked(IDC_RADIO_CONTENT_MSG) && m_ContentMsg.Left(6) == "<Start") || IsChecked(IDC_RADIO_CONTENT_STARTERS);
+		{                               // Its a time like <Next Minute> or a start list like <Next +2 Starters>
+		bool isStartList = (IsChecked(IDC_RADIO_CONTENT_MSG) && m_ContentMsg.Right(9) == "Starters>") || IsChecked(IDC_RADIO_CONTENT_STARTERS);
 		CString nextPlus("00");
 		if (IsChecked(IDC_RADIO_CONTENT_MSG))
 			{

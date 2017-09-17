@@ -6,6 +6,7 @@ CHighTimeSpan HHMMSST2Span(CString a_Time);
 CHighTimeSpan MM2Span(CString a_Time);
 bool ToCHighTime(CString a_XmlTime, CHighTime& a_OutputTime);
 float SpanToFloatSecs(CHighTimeSpan& a_Span);
+CString HighTimeAsStr(CHighTime const & a_Time);
 bool FileExists(CString a_File);
 bool CopyAppendWaveFile(CString a_Source, CString a_Target);
 

@@ -100,9 +100,12 @@ CHighTimeSpan CStartListRecording::RealDuration(CHighTime a_Time)
     CHighTimeSpan offset = MM2Span(m_OffsetTime);
 	CHighTime startTime = a_Time + offset;
 
+	TRACE1("RealDuration asked for duration at time %s\n", a_Time.Format("%H:%M:%S.%s"));
 	float timeTotal(0);
 	std::vector<CString> names = theApp.StartList().StartersAtTime(startTime);
 	CString name;
+	if (names.size() == 0)
+		names.push_back("No Starters");
 	for (auto j = names.begin(); j != names.end(); j++)
 		{
 		name = theApp.StartList().FileNameOfName(*j);
@@ -112,7 +115,7 @@ CHighTimeSpan CStartListRecording::RealDuration(CHighTime a_Time)
 		if (!temp.IsValid()) throw temp.LastError();
 		timeTotal += temp.getDuration();
 		}
-	if (names.size())
+	if (names.size() > 1)
 		timeTotal += (names.size() - 1) * BIG_GAP_SIZE;
 	retVal = FloatSecsToSpan(timeTotal);
 
@@ -122,11 +125,15 @@ CHighTimeSpan CStartListRecording::RealDuration(CHighTime a_Time)
 
 bool CStartListRecording::AppendSoundToFile(CHighTime a_Time, CString& a_FileName)
     {
+	TRACE1("AppendSoundToFile asked for sound at time %s\n", HighTimeAsStr(a_Time));
     CHighTimeSpan offset = MM2Span(m_OffsetTime);
 	CHighTime startTime = a_Time + offset;
 
 	std::vector<CString> names = theApp.StartList().StartersAtTime(startTime);
 	CString name;
+
+	if (names.size() == 0)
+		names.push_back("No Starters");
 
 	unsigned int i(0);
 	for (auto j = names.begin(); j != names.end(); j++)

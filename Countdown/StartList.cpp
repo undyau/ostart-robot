@@ -17,6 +17,7 @@ CStartList::~CStartList()
 
 bool CStartList::Load(CString a_FileName)
 {
+	CWaitCursor wait;
 	m_StartTimes.empty();
 	tinyxml2::XMLDocument doc;
 	doc.LoadFile(a_FileName);

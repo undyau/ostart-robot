@@ -1520,6 +1520,22 @@ bool CCountdownDlg::CopyAllUsedSounds(CFileOperation& fo, CString folder)
 				}
             }
         }
+
+	// Copy all the name files
+
+	result = !!finder.FindFile(theApp.CustomNamesDir() + "\\*.wav");
+
+	while (result)
+		{
+		result = !!finder.FindNextFile();
+		CString fname = finder.GetFilePath();
+		CString name = finder.GetFileName().Left(finder.GetFileName().GetLength());
+		if (!fo.Copy(theApp.CustomNamesDir() + "\\" + name, folder)) // do Copy
+			{
+			fo.ShowError(); // if copy fails show error message
+			return false;
+			}
+		}
 	
 	return true;
 	}
@@ -1544,8 +1560,9 @@ void CCountdownDlg::OnMenuExport()
 		if (!CopyAllUsedSounds(fo, folder + CString("\\Custom")))
 			return;
 
-		theApp.m_Recs.SaveToXML(folder + "\\" + theApp.ConfigFile().Mid(theApp.ConfigFile().ReverseFind('\\')+1));
-		//CopyFile(theApp.ConfigFile(),folder + "\\" + theApp.ConfigFile().Mid(theApp.ConfigFile().ReverseFind('\\')+1),false);
+		theApp.m_Recs.SaveToXML(folder + "\\" + FileNameOnly(theApp.ConfigFile()));
+		if (FileExists(theApp.m_Recs.GetStartListFile()))
+			CopyFile(theApp.m_Recs.GetStartListFile(), folder + "\\" + FileNameOnly(theApp.m_Recs.GetStartListFile()),false);
 		}
 	}
 
@@ -1558,7 +1575,7 @@ void CCountdownDlg::OnMenuImport()
 		{
 		// Check that folder has the right structure
 		CString folder(buf);
-		CString config = theApp.ConfigFile().Mid(theApp.ConfigFile().ReverseFind('\\')+1);
+		CString config = FileNameOnly(theApp.ConfigFile());
 		CString soundDir = theApp.CustomSoundDir().Mid(theApp.CustomSoundDir().ReverseFind('\\')+1);
 		if (!FileExists(folder + "\\" + config))
 			{
@@ -1581,7 +1598,7 @@ void CCountdownDlg::OnMenuImport()
 			return;
 			}
 
-		CopyFile(folder + "\\" + theApp.ConfigFile().Mid(theApp.ConfigFile().ReverseFind('\\')+1),theApp.ConfigFile(),false);
+		CopyFile(folder + "\\" + FileNameOnly(theApp.ConfigFile()),theApp.ConfigFile(),false);
 		theApp.Reload();
 		
 		InitialiseData();

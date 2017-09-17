@@ -5,6 +5,7 @@
 #include "Countdown.h"
 #include "CountdownDlg.h"
 #include "Shlobj.h"
+#include "utils.h"
 #pragma warning(disable:4091)
 #include "imagehlp.h"
 #pragma warning(default:4091)
@@ -91,7 +92,9 @@ BOOL CCountdownApp::InitInstance()
 	MakeSureDirectoryPathExists(temp);
     
 
-    m_Recs.ReloadFromXML(szAppFilePath);
+    Reload();
+	if (FileExists(m_Recs.GetStartListFile()))
+		StartList().Load(m_Recs.GetStartListFile());
 
     CCountdownDlg dlg;
 	m_pMainWnd = &dlg;

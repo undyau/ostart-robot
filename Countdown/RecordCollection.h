@@ -27,7 +27,7 @@ public:
 	CRecording* AddStartListRecord(CString& a_FollowMsgName, CString a_OffsetTime);
 
     bool ReloadFromXML(CString a_XMLFileName);
-    bool SaveToXML(CString a_XMLFileName, CString a_StartTime = "14:00", CString a_StopTime = "14:05");
+    bool SaveToXML(CString a_XMLFileName, bool a_ForExport = false);
     CString GetFileName() {return m_FileName;}	
     void SetFileName(CString a_FileName) {m_FileName = a_FileName;}
 	CString GetVoice() { return m_Voice; }

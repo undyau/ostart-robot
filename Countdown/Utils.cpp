@@ -103,7 +103,7 @@ bool ToCHighTime(CString a_XmlTime, CHighTime& a_OutputTime)
 
 	tm outtime;
 	strptime(a_Time, "", &tm,);*/
-	int nYear, nMonth, nDay, nHour, nMinute, nSecond;
+	int nHour, nMinute, nSecond;
 
 	if (a_XmlTime.Right(1) != "Z")
 		{
@@ -201,6 +201,11 @@ bool FileExists(CString a_File)
     struct stat buf;
     return !stat(a_File, &buf);
     }
+
+CString FileNameOnly(CString a_Path)
+	{
+	return a_Path.Mid(a_Path.ReverseFind('\\') + 1);
+	}
 
 bool CopyAppendWaveFile(CString a_Source, CString a_Target)
     {

@@ -173,7 +173,7 @@ bool CRecordCollection::IsBefore(CRecording& a_Lhs, CRecording& a_Rhs)
     }
 
 
-bool CRecordCollection::SaveToXML(CString a_XMLFileName, CString a_StartTime, CString a_StopTime)
+bool CRecordCollection::SaveToXML(CString a_XMLFileName, bool a_ForExport)
     {  
     #define VARBITS(a) #a, a
 
@@ -198,7 +198,10 @@ bool CRecordCollection::SaveToXML(CString a_XMLFileName, CString a_StartTime, CS
     theXML = ToXML(VARBITS(m_FileName)) + theXML;
 	theXML = ToXML(VARBITS(m_Frequency)) + theXML;
 	theXML = ToXML(VARBITS(m_Voice)) + theXML;
-	theXML = ToXML(VARBITS(m_StartListFile)) + theXML;
+	if (a_ForExport)
+		theXML = ToXML(VARBITS(FileNameOnly(m_StartListFile))) + theXML;
+	else
+		theXML = ToXML(VARBITS(m_StartListFile)) + theXML;
 	theXML = ToXML("CountDownConfig", theXML);
     
 

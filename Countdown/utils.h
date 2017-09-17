@@ -8,6 +8,7 @@ bool ToCHighTime(CString a_XmlTime, CHighTime& a_OutputTime);
 float SpanToFloatSecs(CHighTimeSpan& a_Span);
 CString HighTimeAsStr(CHighTime const & a_Time);
 bool FileExists(CString a_File);
+CString FileNameOnly(CString a_Path);
 bool CopyAppendWaveFile(CString a_Source, CString a_Target);
 
 CString ToXML(CString a_Label, CString& a_Value);

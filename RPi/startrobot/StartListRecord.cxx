@@ -31,49 +31,22 @@ CStartListRecord::CStartListRecord(string a_Name, int a_MinOffset) : CRecord(a_N
   m_MinOffset = a_MinOffset;
   }
 
-std::list<string> CStartListRecord::TitlesForTime(CTimeVal a_Time)
-  {
-  std::list<string> retVal;
-  
-  int hour, min;
-  char buf[50];
-  
- // Note: the time corresponds to the next start time 
- // need to add on the duration of the interval ? 
-  
-  hour = a_Time.Hour();
-  min = a_Time.Min();
-  
-  min = (60 * hour) + min + m_MinOffset;
-  if (min < 0)
-    min += 24*60;
-  hour = min / 60;
-  min = min % 60;
-  
-  if (min == 0)
-      {
-      sprintf(buf, "cdhour%02d", hour);
-      retVal.push_back(string(buf));
-      return retVal;
-      }
+std::list<string> CStartList::TitlesForTime(CTimeVal a_Time)
+	{
+	std::vector<string> result;
+	std::pair <std::multimap<CTimeVal, string>::iterator, std::multimap<CTimeVal, string>::iterator> ret;
+	ret = m_StartTimes.equal_range(a_Time);
+	for (std::multimap<CTimeVal, string>::iterator it = ret.first; it != ret.second; ++it)
+		result.push_back(it->second);
+	return result;
+	}
 
-    if (hour > 0 && hour < 10)
-        sprintf(buf, "cdnum%01d", hour);
-    else
-        sprintf(buf, "cdnum%02d", hour);
-    retVal.push_back(string(buf));
-    
-    sprintf(buf, "cdnum%02d", min); 
-    retVal.push_back(string(buf));    
-    return retVal;
-}
-  
 float CStartListRecord::DurationForTime(CTimeVal a_Time)
   {
   std::list<string> list = TitlesForTime(a_Time);
   float retVal(0);
   for (auto i: list)
-      retVal += gSoundLibrary->GetTimeSndDuration(i);
+      retVal += gSoundLibrary->GetNameSndDuration(i);
       
   return retVal;
   }
@@ -87,8 +60,8 @@ std::list<CSlot> CStartListRecord::RecordsForTime(CTimeVal a_Time)
       {
       CSlot slot;
       slot.m_Time.AddSecs(duration);
-      slot.m_FileName = gSoundLibrary->GetTimeSndFile(i);
-      duration += gSoundLibrary->GetTimeSndDuration(i);
+      slot.m_FileName = gSoundLibrary->GetNameSndFile(i);
+      duration += gSoundLibrary->GetNameSndDuration(i);
       retVal.push_back(slot);
       }
       

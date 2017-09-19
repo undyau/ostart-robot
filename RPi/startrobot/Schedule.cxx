@@ -131,7 +131,7 @@ float CSchedule::GetElementValTimeVal(size_t a_Pos, string a_Name)
 void CSchedule::ReadRecordDef(unsigned int a_Pos)
 {
 	string name = GetElementVal(a_Pos, "m_Name");  // Name - will be file name for announcement type
-	string type = GetElementVal(a_Pos, "Type"); //"Custom" or "Timed"
+	string type = GetElementVal(a_Pos, "Type"); //"Custom" or "Timed" or "StartList"
 	string follow = GetElementVal(a_Pos, "m_FollowMsgName"); //Name of msg this follows (may be redundant)
 	float playattime = GetElementValTimeVal(a_Pos, "m_TimingTime"); //Offset to start playing at (first record in chain only)
 	bool finishattime = GetElementValBool(a_Pos, "m_FinishAtTime"); //True if this message finishes at a specific time
@@ -144,7 +144,11 @@ void CSchedule::ReadRecordDef(unsigned int a_Pos)
 	{
 		rec = move(unique_ptr<CRecord>(new CAnnouncementRecord(name)));
     }
-	else
+	else if (type = "StartList")
+	{
+        rec = move(unique_ptr<CRecord>(new CStartListRecord(name, offsettime)));    
+    }
+    else
     {
 		if (type != "Timed")
 		{

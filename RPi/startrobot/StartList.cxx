@@ -6,6 +6,11 @@ CStartList::CStartList(string m_FileName, string a_RootDir):m_RootDir(a_RootDir)
     m_FileName = a_RootDir + m_FileName.substr(m_FileName.find_last_of("/\\") + 1);
 }
 
+bool CStartList::IsNameFile(string a_FileName)
+{
+    return m_Files.find(a_FileName) != m_Files.end();
+}
+
 timeval CStartList::ISO8601ToTimeval(string a_Text)
 {  
     timeval tm;
@@ -19,7 +24,7 @@ timeval CStartList::ISO8601ToTimeval(string a_Text)
 	return tm;
 }
 
-string CStartList::MakeFileName(string a_Name)
+string CStartList::NormaliseName(string & const a_Name)
 {
     string result(a_Name);
 
@@ -30,8 +35,8 @@ string CStartList::MakeFileName(string a_Name)
 	result.Replace('\\', '_');
 	result.Replace('|', '_');
 	result.Replace('?', '_');
-	result.Replace('*', '_');
-	return result + ".wav";
+	result.Replace('*', '_');  
+	return result;
 }
 
 bool CStartList::FileExists(string a_File)
@@ -42,8 +47,8 @@ bool CStartList::FileExists(string a_File)
 
 bool CStartList::CheckNameSound(string a_Name)
 {
-    string file = MakeFileName(a_Name);
-    if (!FileExists(m_RootDir + "/Custom/" + file))
+    string file = m_RootDir + "/Custom/" + a_Name + ".wav"
+    if (!FileExists(file))
        {
        cout << "Missing Sound file for name " << a_Name << endl;
        return false;           
@@ -56,7 +61,7 @@ bool CStartList::AddStarter(string const & a_GivenName, string const & a_FamilyN
 	timeval tm;
 	if (!ISO8601ToTimeval(a_StartTime, tm))
 		return false;
-	string name(a_GivenName + " " + a_FamilyName);
+	string name(NormaliseName(a_GivenName + " " + a_FamilyName));
 	m_StartTimes.insert(std::pair<CTimeVal, string>(tm, name));
 
 	if (!CheckNameSound(name))
@@ -69,6 +74,9 @@ bool CStartList::Init()
 {
     if (m_FileName.isempty())
        return true;
+       
+    m_Files.empty();
+    m_StartTimes.empty();
        
     tinyxml2::XMLDocument doc;
 	doc.LoadFile(m_FileName);
@@ -119,4 +127,6 @@ bool CStartList::Init()
 			personStart = personStart->NextSiblingElement("PersonStart");
 			}
 		oclass = oclass->NextSiblingElement("ClassStart");
+	   } 
+    return true;
 }

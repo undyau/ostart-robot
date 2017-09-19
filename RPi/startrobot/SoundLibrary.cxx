@@ -1,7 +1,7 @@
 /*
  * SoundLibrary.cxx
  * 
- * Copyright 2014  <pi@raspberrypi>
+ * Copyright 2017  Andy Simpson
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 
 extern CSoundLibrary* gSoundLibrary;
 
+// Callback function used when traversing the folder of wav files 
 static int callback(const char* fpath, const struct stat *sb, int typeflag)
 {
 	if (typeflag == FTW_F)
@@ -44,16 +45,20 @@ static int callback(const char* fpath, const struct stat *sb, int typeflag)
 	return 0;
 }
 
-CSoundLibrary::CSoundLibrary(string a_Dir)
+CSoundLibrary::CSoundLibrary(string a_Dir): m_StartList(nullptr))
 {
 	// Find every wav file under directory
 	gSoundLibrary = this;
-	ftw(a_Dir.c_str(), callback, 16);
 }
 
 CSoundLibrary::~CSoundLibrary()
 {
 	gSoundLibrary = nullptr;
+}
+
+void CSoundLibrary::Init(CStartList* a_StartList)
+{
+	ftw(a_Dir.c_str(), callback, 16);    
 }
 
 void CSoundLibrary::ProcessFile(string a_File)
@@ -75,7 +80,12 @@ void CSoundLibrary::ProcessFile(string a_File)
 	if (duration <= 0)
 		return;
 		
-	if (IsTimeFile(name))
+	if (IsNameFile(a_File))
+	    {
+	    m_NameSndDurations[name] = duration;
+		m_NameSndFiles[name] = a_File;   
+        }
+    else if (IsTimeFile(name))
 		{
 		m_TimeSndDurations[name] = duration;
 		m_TimeSndFiles[name] = a_File;
@@ -86,6 +96,12 @@ void CSoundLibrary::ProcessFile(string a_File)
 		m_AnnouncementFiles[name] = a_File;
 		}
 } 
+
+
+bool CSoundLibrary::IsNameFile(string a_File)
+{
+    return m_StartList && m_StartList->IsNameFile(a_File);
+}
 
 
 bool CSoundLibrary::IsTimeFile(string a_File)
@@ -137,6 +153,22 @@ float CSoundLibrary::GetTimeSndDuration(string a_Title)
 {
 	if (m_TimeSndDurations.find(a_Title) != m_TimeSndDurations.end())
 		return m_TimeSndDurations[a_Title];
+	else 
+		return 0;	
+} 
+
+std::string CSoundLibrary::GetNameSndFile(string a_Title)
+{
+	if (m_NameSndFiles.find(a_Title) != m_NameSndFiles.end())
+		return m_NameSndFiles[a_Title];
+	else 
+		return string();
+}
+
+float CSoundLibrary::GetNameSndDuration(string a_Title)
+{
+	if (m_NameSndDurations.find(a_Title) != m_NameSndDurations.end())
+		return m_NameSndDurations[a_Title];
 	else 
 		return 0;	
 } 

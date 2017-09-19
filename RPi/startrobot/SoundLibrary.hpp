@@ -1,16 +1,20 @@
 #include <string>
 #include <map>
 using namespace std;
+class CStartList;
 
 class CSoundLibrary
 {
 public:
     CSoundLibrary(string a_Dir);
     ~CSoundLibrary();
+    void Init(CStartList* a_StartList);
     string GetAnnouncementFile(string a_Title);
     float GetAnnouncementDuration(string a_Title);
     string GetTimeSndFile(string a_Title);
     float GetTimeSndDuration(string a_Title);  
+    string GetNameSndFile(string a_Title);
+    float GetNameSndDuration(string a_Title);      
     void ProcessFile(string a_File);  
 
 private:
@@ -19,7 +23,9 @@ private:
 	std::map<string, string> m_TimeSndFiles;
 	std::map<string, string> m_AnnouncementFiles;
 	
-	bool IsTimeFile(string a_File);	
+	bool IsTimeFile(string a_File);
+    bool IsNameFile(string a_File);	
 	float GetDuration(string a_File);
+	CStartList* m_StartList;
 	
 };

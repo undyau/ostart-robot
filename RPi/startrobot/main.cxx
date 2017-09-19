@@ -119,6 +119,7 @@ int main(int argc, char **argv)
    
     CStartList startlist(schedule.StartListFile(), dir);
     startlist.Init();
+    lib.Init(startlist);
 
     while (1) // loop forever
     	{

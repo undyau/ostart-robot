@@ -9,10 +9,13 @@ public:
 	CSchedule(string a_Dir);
 	bool Load();
 	void PlayNextSound();   // Schedule sounds and run them
+	string StartListFile() {return m_StartListFile;}
+    }
 	
 private:
 	string m_Dir;
 	string m_XmlStr;
+	string m_StartListFile;
 	int m_FrequencySecs;
 	int m_Version;
 	

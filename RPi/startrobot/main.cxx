@@ -26,6 +26,7 @@
 #include "Sound.hpp"
 #include "Schedule.hpp"
 #include "SoundLibrary.hpp"
+#include "StartList.hpp"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <streambuf>
@@ -110,15 +111,20 @@ int main(int argc, char **argv)
 	CSoundLibrary lib(dir);
 	gSoundLibrary = &lib;
 	CSchedule schedule(dir);
-	if (schedule.Load())
+	if (!schedule.Load())
 		{
-		cout << "Schedule loaded" << endl;
+		cout << "Schedule load failed" << endl;
+    return 1;
+    }
+   
+    CStartList startlist(schedule.StartListFile(), dir);
+    startlist.Init();
 
-		while (1) // loop forever
-			{
-			schedule.PlayNextSound();
-			}
-		}
+    while (1) // loop forever
+    	{
+    	schedule.PlayNextSound();
+    	}
+
 	return 0;
 }
 

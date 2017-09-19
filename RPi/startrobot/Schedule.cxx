@@ -52,6 +52,9 @@ bool CSchedule::Load()
 		std::istreambuf_iterator<char>());
 	m_XmlStr = str;
 
+	// Find the Startlist file, if present
+	string m_StartListFile = GetElementVal(0, "m_StartListFile");
+
 	// Get frequency  (regex seems broken in this compiler version :(    )
 	string val = GetElementVal(0, "m_Frequency");
 	while (val.size() > 0 && val.substr(0,1) == " ")

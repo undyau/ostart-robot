@@ -10,14 +10,6 @@ CTimeVal::CTimeVal(timeval a_Time) : m_Time(a_Time)
 CTimeVal::CTimeVal()
 {
 	gettimeofday(&m_Time, NULL);
-	
-/*	time_t rawtime;
-	struct tm * timeinfo;
-
-	time (&rawtime);
-	timeinfo = localtime (&rawtime);
-	cout << "TimeVal set at " << timeinfo->tm_hour << ":" << timeinfo->tm_min << ":" << timeinfo->tm_sec << endl;	
-	cout << "TimeVal set to " << TimeString() << endl;	*/
 }
 
   

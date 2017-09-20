@@ -21,5 +21,7 @@ private:
 	bool CreateNameSound(CString const& a_Name);
 	CString NormaliseName(CString const & a_Name);
 	CString ToFileName(CString const & a_Name);
+
+	bool CreateTimeSounds();
 };
 

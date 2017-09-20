@@ -1,14 +1,13 @@
 #include <string>
 #include <map>
 using namespace std;
-class CStartList;
 
 class CSoundLibrary
 {
 public:
     CSoundLibrary(string a_Dir);
     ~CSoundLibrary();
-    void Init(CStartList* a_StartList);
+    void Init();
     string GetAnnouncementFile(string a_Title);
     float GetAnnouncementDuration(string a_Title);
     string GetTimeSndFile(string a_Title);
@@ -19,13 +18,15 @@ public:
 
 private:
 	std::map<string, float> m_TimeSndDurations;
-	std::map<string, float> m_AnnouncementDurations;
 	std::map<string, string> m_TimeSndFiles;
 	std::map<string, string> m_AnnouncementFiles;
+	std::map<string, float> m_AnnouncementDurations; 
+	std::map<string, float> m_NameSndDurations;  
+	std::map<string, string> m_NameSndFiles;  
 	
 	bool IsTimeFile(string a_File);
-    bool IsNameFile(string a_File);	
+  bool IsNameFile(string a_File);	
 	float GetDuration(string a_File);
-	CStartList* m_StartList;
+  string m_Dir;
 	
 };

@@ -27,10 +27,13 @@
 #include <unistd.h>
 #include "AnnouncementRecord.hpp"
 #include "TimeRecord.hpp"
+#include "StartListRecord.hpp"
 #include "Sound.hpp"
 #include <streambuf>
 #include <math.h>
 #include <iostream>
+#include <libgen.h>
+#include "string.h"
 
 CSchedule::CSchedule(string a_Dir) : m_Dir(a_Dir)
 {
@@ -53,7 +56,8 @@ bool CSchedule::Load()
 	m_XmlStr = str;
 
 	// Find the Startlist file, if present
-	string m_StartListFile = GetElementVal(0, "m_StartListFile");
+	m_StartListFile = GetElementVal(0, "m_StartListFile");
+    m_StartListFile = m_StartListFile.substr(m_StartListFile.find_last_of("/\\") + 1);
 
 	// Get frequency  (regex seems broken in this compiler version :(    )
 	string val = GetElementVal(0, "m_Frequency");
@@ -144,7 +148,7 @@ void CSchedule::ReadRecordDef(unsigned int a_Pos)
 	{
 		rec = move(unique_ptr<CRecord>(new CAnnouncementRecord(name)));
     }
-	else if (type = "StartList")
+	else if (type == "StartList")
 	{
         rec = move(unique_ptr<CRecord>(new CStartListRecord(name, offsettime)));    
     }
@@ -250,7 +254,7 @@ cout << "startTime was " << startTime.TimeString() << " adding on " << i->first 
 	startTime.AddSecs(i->first);
 cout << "startTime was " << startTime.TimeString() << " looking at Anchored Start: " << i->second->AnchoredStart() << endl;
 	if (!i->second->AnchoredStart())
-		startTime.AddSecs(- i->second->DurationForTime(baseAnnounceTime));
+	    startTime.AddSecs(- i->second->DurationForTime(baseAnnounceTime));
 
 	// Get the list of file names as a string for aplay
 	string files = i->second->RecordsForTimeAsString(baseAnnounceTime);

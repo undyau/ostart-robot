@@ -36,6 +36,7 @@
 using namespace std;
 
 CSoundLibrary* gSoundLibrary;
+CStartList* gStartList;
 
 
 bool FindDirOnMount(string a_Mount, string& a_Dir)
@@ -114,12 +115,13 @@ int main(int argc, char **argv)
 	if (!schedule.Load())
 		{
 		cout << "Schedule load failed" << endl;
-    return 1;
-    }
+        return 1;
+        }
    
     CStartList startlist(schedule.StartListFile(), dir);
+    gStartList = &startlist;
     startlist.Init();
-    lib.Init(startlist);
+    lib.Init();
 
     while (1) // loop forever
     	{

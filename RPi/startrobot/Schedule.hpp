@@ -10,7 +10,6 @@ public:
 	bool Load();
 	void PlayNextSound();   // Schedule sounds and run them
 	string StartListFile() {return m_StartListFile;}
-    }
 	
 private:
 	string m_Dir;

@@ -34,6 +34,10 @@ bool CStartList::Load(CString a_FileName)
 		if (!CreateNameSound("No Starters"))
 			return false;
 
+	// Create custom time sounds using this voice
+	if (!CreateTimeSounds())
+		return false;
+
 	// Iterate over all classes
 	tinyxml2::XMLElement* oclass = root->FirstChildElement("ClassStart");
 	if (oclass == nullptr)
@@ -109,9 +113,6 @@ bool CStartList::AddStarter(CString const & a_GivenName, CString const & a_Famil
 	if (!GotNameSound(name))
 		if (!CreateNameSound(name))
 			return false;
-/*	if (!GotNameSound(a_FamilyName))
-		if (!CreateNameSound(a_FamilyName))
-			return false;*/
 
 	return true;
 	}
@@ -123,7 +124,7 @@ bool CStartList::GotNameSound(CString const & a_Name)
 
 bool CStartList::CreateNameSound(CString const & a_Name)
 	{
-	return theApp.CreateNameSound(a_Name, FileNameOfName(a_Name));
+	return theApp.CreateSoundFile(a_Name, FileNameOfName(a_Name));
 	}
 
 CString CStartList::NormaliseName(CString const & a_Name)
@@ -154,32 +155,41 @@ CString CStartList::ToFileName(CString const & a_Name)
 	}
 
 
-/*
-<PersonStart>
-<Person sex="M">
-<Id>5075</Id>
-<Name>
-<Family>Harding</Family>
-<Given>Stephen</Given>
-</Name>
-<BirthDate>1999-01-01</BirthDate>
-</Person>
-<Organisation>
-<Id>247</Id>
-<Name>NZ L</Name>
-<ShortName>NZ L</ShortName>
-<Country code="NZL">NZL</Country>
-</Organisation>
-<Start raceNumber="1">
-<BibNumber>128</BibNumber>
-<StartTime>2017-09-24T10:26:00.000</StartTime>
-<ControlCard>2033334</ControlCard>
-<AssignedFee>
-<Fee>
-<Name>Actual</Name>
-<Amount>27.00</Amount>
-</Fee>
-</AssignedFee>
-</Start>
-</PersonStart>
-*/
+// Create custom time sounds using this voice
+bool CStartList::CreateTimeSounds()
+	{
+	std::map<CString, CString> targets;
+	CString path = theApp.CustomSoundDir() + "\\";
+	CString suffix = ".wav";
+
+	targets["cdhour00"] = "midnight";
+	targets["cdhour12"] = "noon";
+	targets["cdnum00"] = "zero";
+	CString t1,t2;
+	for (auto i = 0; i < 10; i++)
+		{		
+		t1.Format("o%d", i);
+		t2.Format("cdnum0%d", i);
+		targets[t2] = t1;
+		}
+	for (auto i = 1; i < 60; i++)
+		{
+		t1.Format("%d", i);
+		t2.Format("cdnum%d", i);
+		targets[t2] = t1;
+		}
+	for (auto i = 1; i < 12; i++)
+		{
+		t1.Format("%d o'clock", i);
+		t2.Format("cdhour%02d", i);
+		targets[t2] = t1;
+		t2.Format("cdhour%02d", i+12);
+		targets[t2] = t1;
+		}
+
+	for (auto i = targets.begin(); i != targets.end(); i++)
+		if (!FileExists(path + i->first + suffix))
+			if (!theApp.CreateSoundFile(i->second, path + i->first + suffix))
+				return false;
+	return true;
+	}

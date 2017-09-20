@@ -21,23 +21,30 @@
  * 
  */
  
+#include "SoundLibrary.hpp" 
 #include "StartListRecord.hpp"
-#include "SoundLibrary.hpp"
+#include "StartList.hpp"
+#include <iostream>
 
 extern CSoundLibrary* gSoundLibrary;
+extern CStartList* gStartList;
 
 CStartListRecord::CStartListRecord(string a_Name, int a_MinOffset) : CRecord(a_Name)
   {
   m_MinOffset = a_MinOffset;
   }
 
-std::list<string> CStartList::TitlesForTime(CTimeVal a_Time)
+std::list<string> CStartListRecord::TitlesForTime(CTimeVal a_Time)
 	{
-	std::vector<string> result;
-	std::pair <std::multimap<CTimeVal, string>::iterator, std::multimap<CTimeVal, string>::iterator> ret;
-	ret = m_StartTimes.equal_range(a_Time);
-	for (std::multimap<CTimeVal, string>::iterator it = ret.first; it != ret.second; ++it)
-		result.push_back(it->second);
+	std::list<string> result;
+	a_Time.AddSecs(m_MinOffset*60);
+	std::multimap<string, string>::iterator it = gStartList->StartTimes().lower_bound(a_Time.TimeString());
+	std::multimap<string, string>::iterator finish = gStartList->StartTimes().upper_bound(a_Time.TimeString());
+    while (it != finish)
+        {
+        result.push_back(it->second);
+		++it;
+        }
 	return result;
 	}
 
@@ -46,8 +53,7 @@ float CStartListRecord::DurationForTime(CTimeVal a_Time)
   std::list<string> list = TitlesForTime(a_Time);
   float retVal(0);
   for (auto i: list)
-      retVal += gSoundLibrary->GetNameSndDuration(i);
-      
+      retVal += gSoundLibrary->GetNameSndDuration(i);   
   return retVal;
   }
   

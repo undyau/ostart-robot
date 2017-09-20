@@ -166,7 +166,7 @@ void CCountdownApp::Reload()
 	m_Recs.ReloadFromXML(szAppFilePath);
 	}
 
-bool CCountdownApp::CreateNameSound(CString const & a_Name, CString const & a_FileName)
+bool CCountdownApp::CreateSoundFile(CString const & a_Name, CString const & a_FileName)
 	{
 	return m_TTSGenerator.GenerateSound(a_Name, a_FileName);
 	}

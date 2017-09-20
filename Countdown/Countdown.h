@@ -36,7 +36,7 @@ public:
 	void SetNotifyHwnd(HWND a_Hwnd);
 	void Reload();
 	CStartList& StartList() { return m_StartList; }
-	bool CreateNameSound(CString const & a_Name, CString const & a_FileName);
+	bool CreateSoundFile(CString const & a_Name, CString const & a_FileName);
 
 // Overrides
 	// ClassWizard generated virtual function overrides

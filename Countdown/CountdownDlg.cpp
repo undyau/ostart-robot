@@ -1530,7 +1530,7 @@ bool CCountdownDlg::CopyAllUsedSounds(CFileOperation& fo, CString folder)
 		result = !!finder.FindNextFile();
 		CString fname = finder.GetFilePath();
 		CString name = finder.GetFileName().Left(finder.GetFileName().GetLength());
-		if (!fo.Copy(theApp.CustomNamesDir() + "\\" + name, folder)) // do Copy
+		if (!FileExists(folder + "\\" + name) && !fo.Copy(theApp.CustomNamesDir() + "\\" + name, folder)) // do Copy
 			{
 			fo.ShowError(); // if copy fails show error message
 			return false;

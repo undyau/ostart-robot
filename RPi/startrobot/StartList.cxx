@@ -1,9 +1,13 @@
 #include "StartList.hpp"
 #include "tinyxml2.h"
+#include <iostream>
+#include <algorithm>
+#include <unistd.h>
+#include <iostream>
 
-CStartList::CStartList(string m_FileName, string a_RootDir):m_RootDir(a_RootDir)
+CStartList::CStartList(string a_FileName, string a_RootDir):m_RootDir(a_RootDir)
 {
-    m_FileName = a_RootDir + m_FileName.substr(m_FileName.find_last_of("/\\") + 1);
+    m_FileName = a_RootDir + "/" + a_FileName.substr(m_FileName.find_last_of("/\\") + 1);
 }
 
 bool CStartList::IsNameFile(string a_FileName)
@@ -13,56 +17,63 @@ bool CStartList::IsNameFile(string a_FileName)
 
 timeval CStartList::ISO8601ToTimeval(string a_Text)
 {  
-    timeval tm;
-    int nHour, nMinute, nSecond;
-    nHour = atoi(a_Text.substr(11, 2));
-	nMinute = atoi(a_Text.substr(14, 2));
-	nSecond = atoi(a_Text.substr(17, 2));
-	
+	// tm is interpreted as being in GMT, but it probably isn't
+	// Get the difference from GMT and subtract it
+
+  time_t t = time(NULL);
+  struct tm lt = {0};
+
+  localtime_r(&t, &lt);
+
+  timeval tm;
+  int nHour, nMinute, nSecond;
+  nHour = atoi(a_Text.substr(11, 2).c_str());
+	nMinute = atoi(a_Text.substr(14, 2).c_str());
+	nSecond = atoi(a_Text.substr(17, 2).c_str());
 	tm.tv_usec = 0;
-	tm.tv_sec = ((nHour*60) + nMinute)*60 + nSecond;
+	tm.tv_sec = ((nHour*60) + nMinute)*60 + nSecond - lt.tm_gmtoff ;	
+
 	return tm;
 }
 
-string CStartList::NormaliseName(string & const a_Name)
+string CStartList::NormaliseName(string a_Name)
 {
-    string result(a_Name);
+  string result(a_Name);
 
-	result.Replace('<','_');
-	result.Replace('>', '_');
-	result.Replace(':', '_');
-	result.Replace('/', '_');
-	result.Replace('\\', '_');
-	result.Replace('|', '_');
-	result.Replace('?', '_');
-	result.Replace('*', '_');  
+  std::replace( result.begin(), result.end(), '<','_'); 
+	std::replace( result.begin(), result.end(),'<','_');
+	std::replace( result.begin(), result.end(),'>', '_');
+	std::replace( result.begin(), result.end(),':', '_');
+	std::replace( result.begin(), result.end(),'/', '_');
+	std::replace( result.begin(), result.end(),'\\', '_');
+	std::replace( result.begin(), result.end(),'|', '_');
+	std::replace( result.begin(), result.end(),'?', '_');
+	std::replace( result.begin(), result.end(),'*', '_');  
 	return result;
 }
 
 bool CStartList::FileExists(string a_File)
 {
-  struct stat buffer;   
-  return (stat (a_File.c_str(), &buffer) == 0); 
+  return access( a_File.c_str(), F_OK ) != -1; 
 }
 
 bool CStartList::CheckNameSound(string a_Name)
 {
-    string file = m_RootDir + "/Custom/" + a_Name + ".wav"
+    string file = m_RootDir + "/Custom/" + a_Name + ".wav";
     if (!FileExists(file))
        {
        cout << "Missing Sound file for name " << a_Name << endl;
        return false;           
        }
     m_Files.insert(file);
+    return true;
 }
 
 bool CStartList::AddStarter(string const & a_GivenName, string const & a_FamilyName, string const & a_StartTime)
 	{
-	timeval tm;
-	if (!ISO8601ToTimeval(a_StartTime, tm))
-		return false;
+	CTimeVal tm = CTimeVal(ISO8601ToTimeval(a_StartTime));
 	string name(NormaliseName(a_GivenName + " " + a_FamilyName));
-	m_StartTimes.insert(std::pair<CTimeVal, string>(tm, name));
+	m_StartTimes.insert(std::pair<string, string>(tm.TimeString(), name));
 
 	if (!CheckNameSound(name))
 		return false;
@@ -72,14 +83,17 @@ bool CStartList::AddStarter(string const & a_GivenName, string const & a_FamilyN
 
 bool CStartList::Init()
 {
-    if (m_FileName.isempty())
-       return true;
-       
+  if (m_FileName.size() == 0)
+		{
+		cout << "No StartList file supplied." << endl;
+		return true;
+		}
+     
     m_Files.empty();
     m_StartTimes.empty();
        
     tinyxml2::XMLDocument doc;
-	doc.LoadFile(m_FileName);
+	doc.LoadFile(m_FileName.c_str());
 
 	tinyxml2::XMLElement* root = doc.FirstChildElement("StartList");
 	if (root == nullptr)
@@ -128,5 +142,6 @@ bool CStartList::Init()
 			}
 		oclass = oclass->NextSiblingElement("ClassStart");
 	   } 
+    cout << "Loaded " << m_StartTimes.size() << " starters" << endl;
     return true;
 }

@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-Wall -g -std=gnu++0x -c
-LDFLAGS=
+LDFLAGS=-lstdc++
 SOURCES=$(wildcard *.cxx)
 OBJECTS=$(SOURCES:.cxx=.o)
 
@@ -13,4 +13,4 @@ all: startrobot
 	$(CC) $(CFLAGS) $< -o $@
 	
 clean:
-	rm -f $(OBJECTS) *.gch
+	rm -f $(OBJECTS) *.gch startrobot

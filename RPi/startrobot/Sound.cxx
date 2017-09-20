@@ -54,7 +54,6 @@ string CSound::EscapedFileNames()
 	for (unsigned int i = 0; i < m_FileNames.size(); i++)
 		if (!IsWavSuffix(last4Characters) && m_FileNames.at(i) == ' ')
 			{
-cout <<  "last4Characters  is " << last4Characters << endl;
 			retVal += "\\ ";
 			if (last4Characters.size() >= 4)
 				last4Characters.erase(0,1);

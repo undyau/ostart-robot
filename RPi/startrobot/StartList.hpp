@@ -12,14 +12,17 @@ public:
     ~CStartList(){};
     bool Init();   
     bool IsNameFile(string a_FileName); 
+    std::multimap<string, string>& StartTimes() {return m_StartTimes;}
 
 private:
-    std::multimap<CTimeVal, string> m_StartTimes;   //start time, normalised name.
+    std::multimap<string, string> m_StartTimes;   //start time, normalised name.
     std::set<string> m_Files;
     string m_FileName;
     string m_RootDir;
-	bool AddStarter(string const & a_GivenName, string const & a_FamilyName, string const & a_StartTime);
-	bool CheckNameSound(string a_Name);
-	timeval ISO8601ToTimeval(string a_Text);
+    
+    bool AddStarter(string const & a_GivenName, string const & a_FamilyName, string const & a_StartTime);
+    bool CheckNameSound(string a_Name);
+    timeval ISO8601ToTimeval(string a_Text);
     string NormaliseName(string a_Name); 
+    bool FileExists(string a_File);
 };

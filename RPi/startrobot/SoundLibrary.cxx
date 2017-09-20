@@ -28,9 +28,11 @@
 #include <iostream>
 #include "Wave.hpp"
 #include "SoundLibrary.hpp"
+#include "StartList.hpp"
 //#include <regex>  seems broken
 
 extern CSoundLibrary* gSoundLibrary;
+extern CStartList* gStartList;
 
 // Callback function used when traversing the folder of wav files 
 static int callback(const char* fpath, const struct stat *sb, int typeflag)
@@ -45,7 +47,7 @@ static int callback(const char* fpath, const struct stat *sb, int typeflag)
 	return 0;
 }
 
-CSoundLibrary::CSoundLibrary(string a_Dir): m_StartList(nullptr))
+CSoundLibrary::CSoundLibrary(string a_Dir): m_Dir(a_Dir)
 {
 	// Find every wav file under directory
 	gSoundLibrary = this;
@@ -56,9 +58,9 @@ CSoundLibrary::~CSoundLibrary()
 	gSoundLibrary = nullptr;
 }
 
-void CSoundLibrary::Init(CStartList* a_StartList)
+void CSoundLibrary::Init()
 {
-	ftw(a_Dir.c_str(), callback, 16);    
+	ftw(m_Dir.c_str(), callback, 16);    
 }
 
 void CSoundLibrary::ProcessFile(string a_File)
@@ -100,7 +102,7 @@ void CSoundLibrary::ProcessFile(string a_File)
 
 bool CSoundLibrary::IsNameFile(string a_File)
 {
-    return m_StartList && m_StartList->IsNameFile(a_File);
+    return gStartList->IsNameFile(a_File);
 }
 
 

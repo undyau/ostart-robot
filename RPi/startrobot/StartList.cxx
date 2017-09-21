@@ -49,6 +49,7 @@ string CStartList::NormaliseName(string a_Name)
 	std::replace( result.begin(), result.end(),'|', '_');
 	std::replace( result.begin(), result.end(),'?', '_');
 	std::replace( result.begin(), result.end(),'*', '_');  
+	std::replace( result.begin(), result.end(),' ', '_');  
 	return result;
 }
 
@@ -74,7 +75,7 @@ bool CStartList::AddStarter(string const & a_GivenName, string const & a_FamilyN
 	CTimeVal tm = CTimeVal(ISO8601ToTimeval(a_StartTime));
 	string name(NormaliseName(a_GivenName + " " + a_FamilyName));
 	m_StartTimes.insert(std::pair<string, string>(tm.TimeString(), name));
-
+//cout << "Added starter " << name << "at " << tm.TimeString() << endl;
 	if (!CheckNameSound(name))
 		return false;
 
@@ -103,8 +104,7 @@ bool CStartList::Init()
 		}
 
     // Create sound for empty time slots
-	if (!CheckNameSound("No Starters"))
-		return false;
+	CheckNameSound("No Starters");
 
 	// Iterate over all classes
 	tinyxml2::XMLElement* oclass = root->FirstChildElement("ClassStart");

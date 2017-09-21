@@ -36,3 +36,5 @@ Countdown/Debug/
 *.opt
 *.plg
 Countdown/Countdown.vcxproj.filters
+RPi/startrobot/startrobot.dev
+RPi/startrobot/startrobot.layout

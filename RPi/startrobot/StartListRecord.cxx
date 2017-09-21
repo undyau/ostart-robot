@@ -45,6 +45,7 @@ std::list<string> CStartListRecord::TitlesForTime(CTimeVal a_Time)
         result.push_back(it->second);
 		++it;
         }
+  //cout << "Found " << result.size() << " records for "<< a_Time.TimeString() << endl;
 	return result;
 	}
 

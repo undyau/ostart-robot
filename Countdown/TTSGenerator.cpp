@@ -114,7 +114,8 @@ bool CTTSGenerator::GenerateSound(CString const & a_Text, CString const & a_File
 		return false;
 		}
 
-	//Speak the text "hello world" synchronously
+	//Speak the text 
+	cpVoice->SetVolume(100);
 	hr = cpVoice->Speak(CT2CW(a_Text), SPF_DEFAULT, NULL);
 	if (!SUCCEEDED(hr))
 		{

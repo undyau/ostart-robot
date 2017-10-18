@@ -201,7 +201,7 @@ void CCountdownDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 
 	if (m_InAdd)
-	{
+		{
 		DDV_MinMaxInt(pDX, atoi(m_TimingMM), 0, 59);
 		DDV_MinMaxInt(pDX, atoi(m_TimingSS), 0, 59);
 
@@ -210,19 +210,19 @@ void CCountdownDlg::DoDataExchange(CDataExchange* pDX)
 
 
 		if (pDX->m_bSaveAndValidate)
-		{
-			if (m_ContentMsg.IsEmpty() && IsChecked(IDC_RADIO_CONTENT_MSG))
 			{
+			if (m_ContentMsg.IsEmpty() && IsChecked(IDC_RADIO_CONTENT_MSG))
+				{
 				pDX->PrepareEditCtrl(IDC_COMBO_CONTENT_MSG);
 				CString message;
 				message.Format("A message must be selected");
 				AfxMessageBox(message, MB_ICONINFORMATION, 0);
 				pDX->Fail();
+				}
 			}
 		}
-	}
 	else if (!m_InExit)
-	{
+		{
 		DDV_MinMaxInt(pDX, atoi(m_FirstHH), 0, 23);
 		DDV_MinMaxInt(pDX, atoi(m_FirstMM), 0, 59);
 
@@ -235,12 +235,12 @@ void CCountdownDlg::DoDataExchange(CDataExchange* pDX)
 		while (m_FreqMM.GetLength() < 1) m_FreqMM = "0" + m_FreqMM;
 		while (m_FreqSS.GetLength() < 2) m_FreqSS = "0" + m_FreqSS;
 		if (pDX->m_bSaveAndValidate)
-		{
+			{
 			theApp.m_Recs.Frequency(m_FreqMM + ':' + m_FreqSS);
-		}
+			}
 
 		if (m_InCreate)
-		{
+			{
 			long start, finish;
 			start = atoi(m_FirstHH) * 100 +
 				atoi(m_FirstMM);
@@ -249,23 +249,25 @@ void CCountdownDlg::DoDataExchange(CDataExchange* pDX)
 				atoi(m_LastMM);
 
 			if (start > finish)
-			{
+				{
 				pDX->PrepareEditCtrl(IDC_EDIT_FIRST_HH);
 				CString message;
 				message.Format("Start must be before end.");
 				AfxMessageBox(message, MB_ICONINFORMATION, 0);
 				pDX->Fail();
+				}
 			}
-		}
 		if (!m_InterimChange)
-		{
+			{
 			DDV_PCFileName(pDX, IDC_EDIT_FILENAME, m_FileName);
 			DDV_PCFileName(pDX, IDC_EDIT_STARTLISTFILE, m_StartListFile);
+			}
 		}
+
+
+	DDX_Control(pDX, IDC_EDIT_TTS_CREATE, m_TtsCreateTextCtrl);
+	DDX_Control(pDX, IDC_BUTTON_TTS_CREATE, m_TtsCreateBtnCtrl);
 	}
-
-
-}
 
 BEGIN_MESSAGE_MAP(CCountdownDlg, CDialog)
 	//{{AFX_MSG_MAP(CCountdownDlg)
@@ -318,6 +320,7 @@ BEGIN_MESSAGE_MAP(CCountdownDlg, CDialog)
 	ON_EN_CHANGE(IDC_EDIT_STARTLISTFILE, &CCountdownDlg::OnEnChangeEditStartlistfile)
 	ON_BN_CLICKED(IDC_RADIO_CONTENT_STARTERS, &CCountdownDlg::OnBnClickedRadioContentStarters)
 	ON_BN_CLICKED(IDC_BUTTON_GENERATE, &CCountdownDlg::OnBnClickedButtonGenerate)
+	ON_BN_CLICKED(IDC_BUTTON_TTS_CREATE, &CCountdownDlg::OnBnClickedButtonTtsCreate)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -708,6 +711,9 @@ void CCountdownDlg::EnableCtrls()
     m_AmplifyCtrl.EnableWindow(!temp.IsEmpty());
 	m_DampenCtrl.EnableWindow(!temp.IsEmpty());
     m_PlayCtrl.EnableWindow(!temp.IsEmpty());
+	m_TtsCreateTextCtrl.EnableWindow(!temp.IsEmpty());
+	m_TtsCreateBtnCtrl.EnableWindow(!temp.IsEmpty());
+
 
     m_DeleteCtrl.EnableWindow(m_ListMsgs.GetSelectedCount() > 0 && !m_ModifyMode); 
 	m_ModifyCtrl.EnableWindow(m_ListMsgs.GetSelectedCount() == 1  && !m_ModifyMode); 
@@ -1543,6 +1549,7 @@ bool CCountdownDlg::CopyAllUsedSounds(CFileOperation& fo, CString folder)
 
 void CCountdownDlg::OnMenuExport() 
 	{
+	CWaitCursor wait;
 	UpdateData(FALSE);
 	//Get a *new* folder location
 	CFileDialog dlg(FALSE,NULL, m_FileName,OFN_OVERWRITEPROMPT,"Folders | ||");
@@ -1676,3 +1683,34 @@ void CCountdownDlg::OnBnClickedButtonGenerate()
 		AfxMessageBox("Couldn't open file : " + m_StartListFile + ". It doesn't exist.", MB_OK | MB_APPLMODAL | MB_ICONEXCLAMATION);
 	theApp.StartList().Load(m_StartListFile);
 }
+
+
+void CCountdownDlg::OnBnClickedButtonTtsCreate()
+	{
+	CString text;
+	m_TtsCreateTextCtrl.GetWindowText(text);
+	if (text.IsEmpty())
+		return;
+
+	CString name;
+	m_NewMsgCtrl.GetWindowText(name);
+	if (name.IsEmpty())
+		{
+		AfxMessageBox("Name for a recording must be supplied.", MB_OK | MB_APPLMODAL | MB_ICONEXCLAMATION);
+		this->m_NewMsgCtrl.SetFocus();
+		return;
+		}
+	if (name.Left(6) == "cdhour" ||
+		name.Left(5) == "cdnum")
+		{
+		AfxMessageBox("Names starting 'cdhour' or 'cdnum' are reserved.", MB_OK | MB_APPLMODAL | MB_ICONEXCLAMATION);
+		this->m_NewMsgCtrl.SetFocus();
+		return;
+		}
+
+	CString FileName;
+	FileName.Format("%s\\%s.wav", theApp.CustomSoundDir(), name);
+	CWaitCursor wait;
+	theApp.CreateSoundFile(text, FileName);
+	return;
+	}

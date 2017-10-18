@@ -29,6 +29,7 @@
 #define IDC_BUTTON_RECORD2              1010
 #define IDC_BUTTON_GENERATE             1010
 #define IDC_COMBO_CONTENT_FORMAT        1011
+#define IDC_BUTTON_TTS_CREATE           1011
 #define IDC_RADIO_TIMING_FINISH         1013
 #define IDC_RADIO_TIMING_START          1014
 #define IDC_BUTTON_COPY                 1015
@@ -102,6 +103,8 @@
 #define IDC_STATIC_GNU                  1073
 #define IDC_STATIC_FREQ_SECONDS         1074
 #define IDC_COMBO_VOICE                 1075
+#define IDC_EDIT1                       1076
+#define IDC_EDIT_TTS_CREATE             1076
 #define ID_MENU_CREATE                  32771
 #define ID_MENU_EXIT                    32772
 #define ID_MENU_MAINTENANCE             32773
@@ -122,7 +125,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        144
 #define _APS_NEXT_COMMAND_VALUE         32784
-#define _APS_NEXT_CONTROL_VALUE         1076
+#define _APS_NEXT_CONTROL_VALUE         1077
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -49,7 +49,8 @@ string CStartList::NormaliseName(string a_Name)
 	std::replace( result.begin(), result.end(),'|', '_');
 	std::replace( result.begin(), result.end(),'?', '_');
 	std::replace( result.begin(), result.end(),'*', '_');  
-	std::replace( result.begin(), result.end(),' ', '_');  
+	std::replace( result.begin(), result.end(),' ', '_'); 
+	std::replace( result.begin(), result.end(),'\'', '_');    
 	return result;
 }
 

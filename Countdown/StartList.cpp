@@ -152,6 +152,7 @@ CString CStartList::ToFileName(CString const & a_Name)
 	result.Replace('?', '_');
 	result.Replace('*', '_');
 	result.Replace(' ', '_');
+    result.Replace('\'', '_');
 	return result;
 	}
 

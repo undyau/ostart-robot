@@ -180,6 +180,9 @@ public:
 	afx_msg void OnBnClickedRadioContentStarters();
 
 	afx_msg void OnBnClickedButtonGenerate();
+	CEdit m_TtsCreateTextCtrl;
+	afx_msg void OnBnClickedButtonTtsCreate();
+	CButton m_TtsCreateBtnCtrl;
 };
 
 //{{AFX_INSERT_LOCATION}}

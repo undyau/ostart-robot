@@ -19,7 +19,6 @@ timeval CStartList::ISO8601ToTimeval(string a_Text)
 {  
 	// tm is interpreted as being in GMT, but it probably isn't
 	// Get the difference from GMT and subtract it
-
   time_t t = time(NULL);
   struct tm lt = {0};
 
@@ -31,7 +30,8 @@ timeval CStartList::ISO8601ToTimeval(string a_Text)
 	nMinute = atoi(a_Text.substr(14, 2).c_str());
 	nSecond = atoi(a_Text.substr(17, 2).c_str());
 	tm.tv_usec = 0;
-	tm.tv_sec = ((nHour*60) + nMinute)*60 + nSecond - lt.tm_gmtoff ;	
+	tm.tv_sec = ((nHour*60) + nMinute)*60 + nSecond - lt.tm_gmtoff ;
+	tm.tv_sec += lt.tm_isdst ? 3600 : 0;
 
 	return tm;
 }
@@ -64,7 +64,7 @@ bool CStartList::CheckNameSound(string a_Name)
     string file = m_RootDir + "/Custom/" + a_Name + ".wav";
     if (!FileExists(file))
        {
-       cout << "Missing Sound file for name " << a_Name << endl;
+       cout << "Missing Sound file for name " << a_Name << " " << file << " not found" << endl;
        return false;           
        }
     m_Files.insert(file);
@@ -76,7 +76,7 @@ bool CStartList::AddStarter(string const & a_GivenName, string const & a_FamilyN
 	CTimeVal tm = CTimeVal(ISO8601ToTimeval(a_StartTime));
 	string name(NormaliseName(a_GivenName + " " + a_FamilyName));
 	m_StartTimes.insert(std::pair<string, string>(tm.TimeString(), name));
-//cout << "Added starter " << name << "at " << tm.TimeString() << endl;
+//cout << "Added starter " << name << " at " << tm.TimeString() << endl;
 	if (!CheckNameSound(name))
 		return false;
 
@@ -105,7 +105,9 @@ bool CStartList::Init()
 		}
 
     // Create sound for empty time slots
-	CheckNameSound("No Starters");
+	string name("No Starters");
+	name = NormaliseName(name);
+	CheckNameSound(name);
 
 	// Iterate over all classes
 	tinyxml2::XMLElement* oclass = root->FirstChildElement("ClassStart");
@@ -134,11 +136,11 @@ bool CStartList::Init()
 				}
 			tinyxml2::XMLElement* start = personStart->FirstChildElement("Start");
 			if (start && start->FirstChildElement("StartTime"))
+				{
 				stime = start->FirstChildElement("StartTime")->GetText();
-
-			if (!AddStarter(gname, fname, stime))
-				return false;
-
+				if (!AddStarter(gname, fname, stime))
+					return false;
+				}
 			personStart = personStart->NextSiblingElement("PersonStart");
 			}
 		oclass = oclass->NextSiblingElement("ClassStart");
